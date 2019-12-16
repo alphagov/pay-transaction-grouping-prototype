@@ -2,7 +2,7 @@ import json
 import pandas
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, abort
 from itertools import chain
 
 app = Flask(__name__)
@@ -60,7 +60,6 @@ def payment_link(ammount):
             foo=json.dumps(request.args),
         )
         session.execute(insert)
-        return reports()
         return redirect(url_for('confirmation'))
     return render_template(
         "pay.html",
@@ -75,6 +74,9 @@ def confirmation():
 
 @app.route("/reports")
 def reports():
+
+    grouping_column = request.args.get('column')
+
     rich_transactions = [
         (ammount, json.loads(metadata))
         for ammount, metadata in session.query(transactions).all()
@@ -83,6 +85,9 @@ def reports():
     column_names = set(chain.from_iterable((
         metadata.keys() for ammount, metadata in rich_transactions
     )))
+
+    if grouping_column and grouping_column not in column_names:
+        abort(400)
 
     stmts = [
         sqlalchemy.select([
@@ -102,10 +107,23 @@ def reports():
         subquery.select()
     )
 
+    if grouping_column:
+        grouping_column = getattr(subquery.c, grouping_column)
+
+        s = session.query(
+            sqlalchemy.func.count(subquery.c.ammount),
+            sqlalchemy.func.sum(subquery.c.ammount),
+            grouping_column
+        ).group_by(grouping_column).all()
+    else:
+        s = []
+
     return render_template(
         "reports.html",
         transactions=[
             dict(result)
             for result in results.fetchall()
         ],
+        results=s,
+        column_names=column_names,
     )

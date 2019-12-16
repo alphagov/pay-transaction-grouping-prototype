@@ -1,3 +1,32 @@
+<h1>reports</h1>
+
+<p>
+  group by:
+  {% for col in column_names %}
+    <a href="/reports?column={{col}}">{{ col }}</a>
+  {% endfor %}
+</p>
+
+{% if results %}
+<table>
+  <thead>
+    <tr>
+      <th>{{ request.args.get('column') }}</th><th>Transactions</th><th>Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for count, ammount, column in results %}
+      <tr>
+        <td>{{ column }}</td><td>{{ count }}</td><td>£{{ ammount }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+
+<h1>transactions</h1>
+
 {% for transaction in transactions %}
   {{ transaction }}<br />
 {% endfor %}
