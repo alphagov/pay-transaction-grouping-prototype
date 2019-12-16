@@ -1,0 +1,114 @@
+import json
+import pandas
+import sqlalchemy
+from sqlalchemy.orm import sessionmaker
+from flask import Flask, render_template, request, redirect, url_for
+from itertools import chain
+
+app = Flask(__name__)
+
+
+engine = sqlalchemy.create_engine('sqlite:///transactions.sqlite')
+connection = engine.connect()
+metadata = sqlalchemy.MetaData()
+
+
+pandas.read_csv('./transactions.csv').to_sql(
+    'transactions',
+    connection,
+    if_exists='replace',
+    index=False,
+)
+transactions = sqlalchemy.Table(
+    'transactions',
+    metadata,
+    autoload=True,
+    autoload_with=engine,
+)
+Session = sessionmaker(bind=engine)
+session = Session()
+
+
+@app.route("/")
+def home():
+    return render_template("index.html")
+
+
+@app.route("/create-payment-link", methods=['GET', 'POST'])
+def create_payment_link():
+    print(request.method)
+
+    if request.method == 'POST':
+        metadata = {
+            request.form[k]: request.form[k.replace('key', 'value')]
+            for k, v in request.form.items() if k.startswith('key')
+        }
+        return redirect(url_for(
+            '.payment_link',
+            ammount=request.form.get('ammount', 0),
+            **metadata,
+        ))
+    return render_template(
+        "create-payment-link.html",
+        transactions=session.query(transactions).all(),
+    )
+
+
+@app.route("/pay/<ammount>", methods=['GET', 'POST'])
+def payment_link(ammount):
+    if request.method == 'POST':
+        insert = sqlalchemy.insert(transactions).values(
+            ammount=ammount,
+            foo=json.dumps(request.args),
+        )
+        session.execute(insert)
+        return reports()
+        return redirect(url_for('confirmation'))
+    return render_template(
+        "pay.html",
+        ammount=ammount,
+    )
+
+
+@app.route("/confirmation", methods=['GET', 'POST'])
+def confirmation():
+    return render_template("confirmation.html")
+
+
+@app.route("/reports")
+def reports():
+    rich_transactions = [
+        (ammount, json.loads(metadata))
+        for ammount, metadata in session.query(transactions).all()
+    ]
+
+    print(rich_transactions)
+
+    column_names = set(chain.from_iterable((
+        metadata.keys() for ammount, metadata in rich_transactions
+    )))
+    print(column_names)
+
+    stmts = [
+        sqlalchemy.select([
+            sqlalchemy.cast(
+                sqlalchemy.literal(ammount), sqlalchemy.Integer
+            ).label('ammount'),
+        ] + [
+            sqlalchemy.cast(
+                sqlalchemy.literal(metadata.get(metadata_key)), sqlalchemy.String
+            ).label(metadata_key)
+            for metadata_key in column_names
+        ])
+        for ammount, metadata in rich_transactions
+    ]
+    subquery = sqlalchemy.union_all(*stmts)
+    results = session.execute(subquery.select())
+
+    return render_template(
+        "reports.html",
+        transactions=[
+            dict(result)
+            for result in results.fetchall()
+        ],
+    )
