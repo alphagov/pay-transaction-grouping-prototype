@@ -56,7 +56,11 @@ def payment_link(ammount):
     if request.method == 'POST':
         insert = sqlalchemy.insert(transactions).values(
             ammount=ammount,
-            metadata=json.dumps(request.args),
+            metadata=json.dumps({
+                k: v
+                for k, v in request.args.items()
+                if k and v
+            }),
         )
         session.execute(insert)
         return redirect(url_for('confirmation'))
@@ -94,7 +98,7 @@ def reports():
     stmts = [
         sqlalchemy.select([
             sqlalchemy.cast(
-                sqlalchemy.literal(ammount), sqlalchemy.Integer
+                sqlalchemy.literal(ammount), sqlalchemy.Float
             ).label('ammount'),
         ] + [
             sqlalchemy.cast(

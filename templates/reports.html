@@ -22,7 +22,7 @@
   <tbody>
     {% for count, ammount, column in results %}
       <tr>
-        <td>{{ column }}</td><td>{{ count }}</td><td>£{{ ammount }}</td>
+        <td>{{ column }}</td><td>{{ count }}</td><td>£{{ '{:,.2f}'.format(ammount) }}</td>
       </tr>
     {% endfor %}
   </tbody>
