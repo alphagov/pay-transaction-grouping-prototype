@@ -16,7 +16,7 @@ metadata = sqlalchemy.MetaData()
 pandas.read_csv('./transactions.csv').to_sql(
     'transactions',
     connection,
-    if_exists='replace',
+    if_exists='append',
     index=False,
 )
 transactions = sqlalchemy.Table(
@@ -36,8 +36,6 @@ def home():
 
 @app.route("/create-payment-link", methods=['GET', 'POST'])
 def create_payment_link():
-    print(request.method)
-
     if request.method == 'POST':
         metadata = {
             request.form[k]: request.form[k.replace('key', 'value')]
@@ -82,12 +80,9 @@ def reports():
         for ammount, metadata in session.query(transactions).all()
     ]
 
-    print(rich_transactions)
-
     column_names = set(chain.from_iterable((
         metadata.keys() for ammount, metadata in rich_transactions
     )))
-    print(column_names)
 
     stmts = [
         sqlalchemy.select([
@@ -103,7 +98,9 @@ def reports():
         for ammount, metadata in rich_transactions
     ]
     subquery = sqlalchemy.union_all(*stmts)
-    results = session.execute(subquery.select())
+    results = session.execute(
+        subquery.select()
+    )
 
     return render_template(
         "reports.html",
