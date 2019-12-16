@@ -1,15 +1,24 @@
 <h1>Create payment link</h1>
 
 <form method="post">
-  <div>
+  <p>
     <label for="ammount">Ammount</label>
     <input type="number" id="ammount" name="ammount" value="">
-  </div>
-
-  <label for="key1">Metadata label</label>
-  <input type="text" name="key1" id="key1" value="key">
-  <label for="key1">Metadata value</label>
-  <input type="text" name="value1" id="value1" value="value">
-  <button type="submit">Create</button>
-
+  </p>
+  <p>
+    <label for="ammount">Description (optional)</label>
+    <input type="text" id="desc" name="desc" value="">
+  </p>
+  {% for i in range(10) %}
+    <fieldset>
+      <legend>Reporting data {{ i }}</legend>
+      <label for="key1">Label</label>
+      <input type="text" name="key{{ i }}" id="key{{ i }}">
+      <label for="key1">Value</label>
+      <input type="text" name="value{{ i }}" id="value{{ i }}">
+    </fieldset>
+  {% endfor %}
+  <p>
+    <button type="submit">Create</button>
+  </p>
 </form>

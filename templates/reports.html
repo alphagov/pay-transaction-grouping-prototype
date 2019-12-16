@@ -1,9 +1,14 @@
+<p>
+  <a href="/">Home</a>
+</p>
+
 <h1>reports</h1>
 
 <p>
   group by:
   {% for col in column_names %}
     <a href="/reports?column={{col}}">{{ col }}</a>
+    {% if not loop.last %}•{% endif %}
   {% endfor %}
 </p>
 
@@ -30,3 +35,7 @@
 {% for transaction in transactions %}
   {{ transaction }}<br />
 {% endfor %}
+
+<p>
+  <a href="/drop">Delete all transactions</a>
+</p>

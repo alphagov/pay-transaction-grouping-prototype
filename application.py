@@ -48,7 +48,6 @@ def create_payment_link():
         ))
     return render_template(
         "create-payment-link.html",
-        transactions=session.query(transactions).all(),
     )
 
 
@@ -57,7 +56,7 @@ def payment_link(ammount):
     if request.method == 'POST':
         insert = sqlalchemy.insert(transactions).values(
             ammount=ammount,
-            foo=json.dumps(request.args),
+            metadata=json.dumps(request.args),
         )
         session.execute(insert)
         return redirect(url_for('confirmation'))
@@ -88,6 +87,9 @@ def reports():
 
     if grouping_column and grouping_column not in column_names:
         abort(400)
+
+    if not rich_transactions:
+        return render_template("no-reports.html")
 
     stmts = [
         sqlalchemy.select([
@@ -125,5 +127,12 @@ def reports():
             for result in results.fetchall()
         ],
         results=s,
-        column_names=column_names,
+        column_names=list(filter(None, column_names)),
     )
+
+
+@app.route("/drop")
+def drop():
+    all = session.query(transactions)
+    all.delete(synchronize_session=False)
+    return redirect(url_for('.reports'))
