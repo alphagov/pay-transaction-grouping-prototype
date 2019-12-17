@@ -41,9 +41,13 @@ def create_payment_link():
             request.form[k]: request.form[k.replace('key', 'value')]
             for k, v in request.form.items() if k.startswith('key')
         }
+        try:
+            ammount = int(request.form.get('ammount', 0))
+        except ValueError:
+            return "ammount must be a whole number", 400
         return redirect(url_for(
             '.payment_link',
-            ammount=request.form.get('ammount', 0),
+            ammount=ammount,
             **metadata,
         ))
     return render_template(
