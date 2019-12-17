@@ -103,11 +103,13 @@ def reports():
     stmts = [
         sqlalchemy.select([
             sqlalchemy.cast(
-                sqlalchemy.literal(ammount), sqlalchemy.Float
+                sqlalchemy.literal(ammount),
+                sqlalchemy.Float,
             ).label('ammount'),
         ] + [
             sqlalchemy.cast(
-                sqlalchemy.literal(metadata.get(metadata_key)), sqlalchemy.String
+                sqlalchemy.literal(metadata.get(metadata_key)),
+                sqlalchemy.String,
             ).label(metadata_key)
             for metadata_key in column_names
         ])
@@ -123,22 +125,20 @@ def reports():
             getattr(subquery.c, grouping_column)
             for grouping_column in grouping_columns
         ]
-
-        s = session.query(
+        reporting_results = session.query(
             sqlalchemy.func.count(subquery.c.ammount).label('transactions'),
             sqlalchemy.func.sum(subquery.c.ammount).label('total'),
             *grouping_columns
         ).group_by(*grouping_columns).all()
     else:
-        s = []
+        reporting_results = []
 
     return render_template(
         "reports.html",
         transactions=[
-            dict(result)
-            for result in results.fetchall()
+            dict(result) for result in results.fetchall()
         ],
-        results=s,
+        results=reporting_results,
         column_names=list(filter(None, column_names)),
     )
 
