@@ -35,3 +35,11 @@ th, td {
 .none {
   color: #999;
 }
+
+table {
+  border-spacing: 0;
+}
+
+h2 {
+  margin: 2em 0 0.5em 0;
+}

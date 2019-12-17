@@ -6,13 +6,18 @@
   <a href="/">Home</a>
 </p>
 
-<h1>reports</h1>
+<h1>Reports</h1>
 
 <p>
-  group by:
+  Group by:
   {% for col in column_names %}
-    <a href="/reports?column={{col}}">{{ col }}</a>
-    {% if not loop.last %}•{% endif %}
+    <a href="/reports?column={{col}}">{{ col|capitalize }}</a>
+    {% if not loop.last %}
+      &middot;
+    {% else %}
+      &middot;
+      <a href="/reports">No grouping</a>
+    {% endif %}
   {% endfor %}
 </p>
 
@@ -34,7 +39,7 @@
 {% endif %}
 
 
-<h1>transactions</h1>
+<h2>Transactions</h2>
 
 <table>
   <thead>
@@ -46,7 +51,7 @@
     </tr>
   </thead>
   <tbody>
-    {% for transaction in transactions %}
+    {% for transaction in transactions|reverse %}
       <tr>
         <td>£{{ '{:,.2f}'.format(transaction.ammount) }}</td>
         {% for col in column_names %}
