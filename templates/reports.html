@@ -11,12 +11,21 @@
 {% if column_names %}
 <p>
   <form method="get">
-  Group by:
+  Report on:
   {% for col in column_names %}
-    <input type="checkbox" name="grouping_columns" value="{{ col }}" id="grouping_column_{{ col }}" {% if col in request.args.getlist('grouping_columns') %}checked="checked"{% endif %}>
+    <input
+      type="checkbox"
+      name="grouping_columns"
+      value="{{ col }}"
+      id="grouping_column_{{ col }}"
+      {% if col in request.args.getlist('grouping_columns') %}checked="checked"{% endif %}
+      onChange="this.form.submit()"
+    >
     <label for="grouping_column_{{ col }}">{{ col|capitalize }}</label>
   {% endfor %}
-    <button type="submit" class="secondary-button">Group</button>
+    <noscript>
+      <button type="submit" class="secondary-button">Update</button>
+    </noscript>
   </form>
 </p>
 {% endif %}
