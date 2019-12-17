@@ -1,17 +1,24 @@
+{% extends "_base.html" %}
+
+{% block content %}
+
 <h1>Create payment link</h1>
 
 <form method="post">
-  <p>
-    <label for="ammount">Ammount</label>
-    <input type="number" id="ammount" name="ammount" value="">
-  </p>
-  <p>
-    <label for="ammount">Description (optional)</label>
-    <input type="text" id="desc" name="desc" value="">
-  </p>
+  <fieldset>
+    <legend>What the user sees</legend>
+    <p>
+      <label for="ammount">Ammount</label>
+      <input type="number" id="ammount" name="ammount" value="">
+    </p>
+    <p>
+      <label for="ammount">Description (optional)</label>
+      <input type="text" id="desc" name="desc" value="">
+    </p>
+  </fieldset>
   {% for i in range(10) %}
     <fieldset>
-      <legend>Reporting data {{ i }}</legend>
+      <legend>Reporting data {{ i + 1 }}</legend>
       <label for="key1">Label</label>
       <input type="text" name="key{{ i }}" id="key{{ i }}">
       <label for="key1">Value</label>
@@ -22,3 +29,5 @@
     <button type="submit">Create</button>
   </p>
 </form>
+
+{% endblock %}

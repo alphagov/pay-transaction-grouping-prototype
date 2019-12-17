@@ -1,3 +1,7 @@
+{% extends "_base.html" %}
+
+{% block content %}
+
 <h1>Pay</h1>
 
 <p>£{{ ammount }}</p>
@@ -5,3 +9,5 @@
 <form method="post">
 <button type="submit">OK, pay</button>
 </form>
+
+{% endblock %}
