@@ -8,6 +8,7 @@
 
 <h1>Reports</h1>
 
+{% if column_names %}
 <p>
   <form method="get">
   Group by:
@@ -18,6 +19,7 @@
     <button type="submit" class="secondary-button">Group</button>
   </form>
 </p>
+{% endif %}
 
 {% if results %}
 <table>

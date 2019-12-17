@@ -82,7 +82,7 @@ def confirmation():
 @app.route("/reports")
 def reports():
 
-    grouping_column = request.args.get('column')
+    grouping_columns = request.args.getlist('grouping_columns')
 
     rich_transactions = [
         (ammount, json.loads(metadata))
@@ -93,8 +93,9 @@ def reports():
         metadata.keys() for ammount, metadata in rich_transactions
     )))
 
-    if grouping_column and grouping_column not in column_names:
-        abort(400)
+    for grouping_column in grouping_columns:
+        if grouping_column not in column_names:
+            return redirect(url_for('.reports'))
 
     if not rich_transactions:
         return render_template("no-reports.html")
@@ -116,8 +117,6 @@ def reports():
     results = session.execute(
         subquery.select()
     )
-
-    grouping_columns = request.args.getlist('grouping_columns')
 
     if grouping_columns:
         grouping_columns = [
