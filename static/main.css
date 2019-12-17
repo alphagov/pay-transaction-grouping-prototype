@@ -25,6 +25,12 @@ button {
   border: none;
 }
 
+button.secondary-button {
+  padding: 0.5em 1em;
+  background: #999;
+  color: white;
+}
+
 th, td {
     text-align: left;
     border-bottom: 1px solid black;
@@ -42,4 +48,12 @@ table {
 
 h2 {
   margin: 2em 0 0.5em 0;
+}
+
+.stick-at-bottom {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  padding: 1em 0;
+  background: white;
 }

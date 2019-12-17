@@ -9,29 +9,34 @@
 <h1>Reports</h1>
 
 <p>
+  <form method="get">
   Group by:
   {% for col in column_names %}
-    <a href="/reports?column={{col}}">{{ col|capitalize }}</a>
-    {% if not loop.last %}
-      &middot;
-    {% else %}
-      &middot;
-      <a href="/reports">No grouping</a>
-    {% endif %}
+    <input type="checkbox" name="grouping_columns" value="{{ col }}" id="grouping_column_{{ col }}" {% if col in request.args.getlist('grouping_columns') %}checked="checked"{% endif %}>
+    <label for="grouping_column_{{ col }}">{{ col|capitalize }}</label>
   {% endfor %}
+    <button type="submit" class="secondary-button">Group</button>
+  </form>
 </p>
 
 {% if results %}
 <table>
   <thead>
     <tr>
-      <th>{{ request.args.get('column') | capitalize }}</th><th>Transactions</th><th>Total</th>
+      {% for column in request.args.getlist('grouping_columns') %}
+        <th>{{ column | capitalize }}</th>
+      {% endfor %}
+      <th>Transactions</th><th>Total</th>
     </tr>
   </thead>
   <tbody>
-    {% for count, ammount, column in results %}
+    {% for row in results %}
       <tr>
-        <td {% if not column %}class="none"{% endif %}>{{ column }}</td><td>{{ count }}</td><td>£{{ '{:,.2f}'.format(ammount) }}</td>
+        {% for column in request.args.getlist('grouping_columns') %}
+          <td {% if not row[column] %}class="none"{% endif %}>{{ row[column] }}</td>
+        {% endfor %}
+        <td>{{ row.transactions }}</td>
+        <td>£{{ '{:,.2f}'.format(row.total) }}</td>
       </tr>
     {% endfor %}
   </tbody>

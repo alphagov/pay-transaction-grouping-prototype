@@ -117,14 +117,19 @@ def reports():
         subquery.select()
     )
 
-    if grouping_column:
-        grouping_column = getattr(subquery.c, grouping_column)
+    grouping_columns = request.args.getlist('grouping_columns')
+
+    if grouping_columns:
+        grouping_columns = [
+            getattr(subquery.c, grouping_column)
+            for grouping_column in grouping_columns
+        ]
 
         s = session.query(
-            sqlalchemy.func.count(subquery.c.ammount),
-            sqlalchemy.func.sum(subquery.c.ammount),
-            grouping_column
-        ).group_by(grouping_column).all()
+            sqlalchemy.func.count(subquery.c.ammount).label('transactions'),
+            sqlalchemy.func.sum(subquery.c.ammount).label('total'),
+            *grouping_columns
+        ).group_by(*grouping_columns).all()
     else:
         s = []
 
