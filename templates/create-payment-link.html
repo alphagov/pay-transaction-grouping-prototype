@@ -2,6 +2,10 @@
 
 {% block content %}
 
+<p>
+  <a href="/">Home</a>
+</p>
+
 <h1>Create payment link</h1>
 
 <form method="post">
@@ -13,7 +17,7 @@
   {% for i in range(10) %}
     <fieldset>
       <legend>Reporting data {{ i + 1 }}</legend>
-      <label for="key1">Label</label>
+      <label for="key1">Column name</label>
       <input type="text" name="key{{ i }}" id="key{{ i }}">
       <label for="key1">Value</label>
       <input type="text" name="value{{ i }}" id="value{{ i }}">

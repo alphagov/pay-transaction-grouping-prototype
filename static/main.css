@@ -11,6 +11,10 @@ input[type=text] {
   margin-right: 1em;
 }
 
+input[type=checkbox] {
+  margin-left: 1em;
+}
+
 fieldset {
   margin-bottom: 2em;
   padding: 2em 1em;
