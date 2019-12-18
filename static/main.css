@@ -61,3 +61,7 @@ h2 {
   padding: 1em 0;
   background: white;
 }
+
+details {
+  margin-top: 3em;
+}

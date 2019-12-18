@@ -131,7 +131,10 @@ def reports():
             *grouping_columns
         ).group_by(*grouping_columns).all()
     else:
-        reporting_results = []
+        reporting_results = session.query(
+            sqlalchemy.func.count(subquery.c.ammount).label('transactions'),
+            sqlalchemy.func.sum(subquery.c.ammount).label('total'),
+        ).all()
 
     return render_template(
         "reports.html",
