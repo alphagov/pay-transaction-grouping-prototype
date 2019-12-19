@@ -80,7 +80,7 @@ def create_payment_link():
     )
 
 
-@app.route("/pay/<ammount>", methods=['GET', 'POST'])
+@app.route("/pay/<int:ammount>", methods=['GET', 'POST'])
 def payment_link(ammount):
     if request.method == 'POST':
         insert = sqlalchemy.insert(transactions_table).values(
@@ -92,16 +92,16 @@ def payment_link(ammount):
             }),
         )
         session.execute(insert)
-        return redirect(url_for('confirmation'))
+        return redirect(url_for('confirmation', ammount=ammount))
     return render_template(
         "pay.html",
         ammount=ammount,
     )
 
 
-@app.route("/confirmation", methods=['GET', 'POST'])
-def confirmation():
-    return render_template("confirmation.html")
+@app.route("/confirmation/<int:ammount>", methods=['GET', 'POST'])
+def confirmation(ammount):
+    return render_template("confirmation.html", ammount=ammount)
 
 
 def _get_rich_transactions():

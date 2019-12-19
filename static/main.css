@@ -82,6 +82,25 @@ h2 {
   background: white;
 }
 
+.fix-at-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  padding: 1em 3em;
+  background: white;
+}
+
 details {
   margin-top: 3em;
+}
+
+.govuk {
+  text-transform: uppercase;
+  color: white;
+  background: black;
+  margin-left: -3em;
+  margin-right: -3em;
+  padding: 0.5em 3em;
+  font-size: 24px;
+  font-weight: bold;
 }
