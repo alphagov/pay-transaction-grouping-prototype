@@ -1,3 +1,4 @@
+{% from 'macros/nav.html' import nav_item %}
 {% extends "_base.html" %}
 
 {% block body %}
@@ -8,11 +9,15 @@
       {% endblock %}
     </div>
     {% block nav %}
-      <a href="/">Dashboard</a>
-      <a href="/transactions">Transactions</a>
-      <a href="/reports">Reports</a>
-      <a href="/payment-links">Payment links</a>
-      <a href="/settings">Settings</a>
+      {% for endpoint, label in [
+        ('home', 'Dashboard'),
+        ('transactions', 'Transactions'),
+        ('reports', 'Reports'),
+        ('payment_links', 'Payment links'),
+        ('settings', 'Settings')
+      ] %}
+        {{ nav_item(endpoint, label)}}
+      {% endfor %}
     {% endblock %}
   </nav>
   {% block content %}
