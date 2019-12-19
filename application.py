@@ -58,7 +58,6 @@ def services():
 
 @app.route("/payment-links", methods=['GET', 'POST'])
 def payment_links():
-    print(session.query(payment_links_table).all())
     return render_template(
         "payment-links.html",
         links=session.query(payment_links_table).all()
@@ -114,11 +113,12 @@ def confirmation(ammount):
     return render_template("confirmation.html", ammount=ammount)
 
 
-def _get_rich_transactions():
-    return [
-        (ammount, json.loads(metadata))
-        for ammount, metadata in session.query(transactions_table).all()
-    ]
+def _get_rich_transactions(extra_columns=None):
+    for ammount, metadata in session.query(transactions_table).all():
+        metadata = json.loads(metadata)
+        for key, value in (extra_columns or []):
+            metadata.update({key: value})
+        yield ammount, metadata
 
 
 def _get_subquery(rich_transactions):
@@ -147,12 +147,29 @@ def _column_names(rich_transactions):
     )))))
 
 
+def _get_reporting_results(subquery, grouping_columns):
+    if grouping_columns:
+        grouping_columns = [
+            getattr(subquery.c, grouping_column)
+            for grouping_column in grouping_columns
+        ]
+        return session.query(
+            sqlalchemy.func.count(subquery.c.ammount).label('transactions'),
+            sqlalchemy.func.sum(subquery.c.ammount).label('total'),
+            *grouping_columns
+        ).group_by(*grouping_columns).all()
+    return session.query(
+        sqlalchemy.func.count(subquery.c.ammount).label('transactions'),
+        sqlalchemy.func.sum(subquery.c.ammount).label('total'),
+    ).all()
+
+
 @app.route("/reports")
 def reports():
 
     grouping_columns = request.args.getlist('grouping_columns')
 
-    rich_transactions = _get_rich_transactions()
+    rich_transactions = list(_get_rich_transactions())
 
     if not rich_transactions:
         return render_template('no-reports.html')
@@ -164,22 +181,7 @@ def reports():
             return redirect(url_for('.reports'))
 
     subquery = _get_subquery(rich_transactions)
-
-    if grouping_columns:
-        grouping_columns = [
-            getattr(subquery.c, grouping_column)
-            for grouping_column in grouping_columns
-        ]
-        reporting_results = session.query(
-            sqlalchemy.func.count(subquery.c.ammount).label('transactions'),
-            sqlalchemy.func.sum(subquery.c.ammount).label('total'),
-            *grouping_columns
-        ).group_by(*grouping_columns).all()
-    else:
-        reporting_results = session.query(
-            sqlalchemy.func.count(subquery.c.ammount).label('transactions'),
-            sqlalchemy.func.sum(subquery.c.ammount).label('total'),
-        ).all()
+    reporting_results = _get_reporting_results(subquery, grouping_columns)
 
     return render_template(
         "reports.html",
@@ -188,10 +190,41 @@ def reports():
     )
 
 
+@app.route("/services/reports")
+def services_reports():
+
+    grouping_columns = request.args.getlist('grouping_columns')
+
+    rich_transactions = list(_get_rich_transactions(
+        extra_columns=[
+            ('Service', 'Example service'),
+            ('Merchant ID', 'EXAMPLE_SERVICE_0345_LIVE'),
+        ]
+    ))
+
+    if not rich_transactions:
+        return render_template('no-reports.html')
+
+    column_names = _column_names(rich_transactions)
+
+    for grouping_column in grouping_columns:
+        if grouping_column not in column_names:
+            return redirect(url_for('.reports'))
+
+    subquery = _get_subquery(rich_transactions)
+    reporting_results = _get_reporting_results(subquery, grouping_columns)
+
+    return render_template(
+        "services-reports.html",
+        results=reporting_results,
+        column_names=column_names,
+    )
+
+
 @app.route("/transactions")
 def transactions():
 
-    rich_transactions = _get_rich_transactions()
+    rich_transactions = list(_get_rich_transactions())
     if not rich_transactions:
         return render_template('no-reports.html')
     column_names = _column_names(rich_transactions)
