@@ -245,6 +245,34 @@ def drop():
     return redirect(url_for('.reports'))
 
 
+@app.route("/populate")
+def populate():
+    for ammount, metadata in ([
+        (100, {'post': 'Bangkok', 'fee type': 'Fee 19', 'country': 'Thailand'}),
+        (100, {'post': 'Bangkok', 'fee type': 'Fee 19', 'country': 'Thailand'}),
+        (100, {'post': 'Phuket', 'fee type': 'Fee 19', 'country': 'Thailand'}),
+        (55, {'post': 'Phuket', 'fee type': 'Fee 4', 'country': 'Thailand'}),
+        (30, {'post': 'Phuket', 'fee type': 'Fee 6', 'country': 'Thailand'}),
+        (100, {'post': 'Paris', 'fee type': 'Fee 19', 'country': 'France'}),
+        (100, {'post': 'Marseille', 'fee type': 'Fee 19', 'country': 'France'}),
+        (100, {'post': 'Ibiza', 'fee type': 'Fee 19', 'country': 'Spain'}),
+        (100, {'post': 'Ibiza', 'fee type': 'Fee 19', 'country': 'Spain'}),
+        (100, {'post': 'Ibiza', 'fee type': 'Fee 19', 'country': 'Spain'}),
+        (55, {'post': 'Ibiza', 'fee type': 'Fee 4', 'country': 'Spain'}),
+        (100, {'post': 'Barcelona', 'fee type': 'Fee 19', 'country': 'Spain'}),
+    ] * 3) + [
+        (100, {'post': 'Washington', 'fee type': 'Fee 19', 'country': 'USA'}),
+        (55, {'post': 'Boston', 'fee type': 'Fee 4', 'country': 'USA'}),
+        (100, {'post': 'Montreal', 'fee type': 'Fee 19', 'country': 'Canada'}),
+    ]:
+        insert = sqlalchemy.insert(transactions_table).values(
+            ammount=ammount,
+            metadata=json.dumps(metadata),
+        )
+        session.execute(insert)
+    return redirect(url_for('.reports'))
+
+
 @app.route("/settings")
 def settings():
     return render_template("settings.html")
