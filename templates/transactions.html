@@ -1,0 +1,31 @@
+{% extends "_admin_base.html" %}
+
+{% block content %}
+
+<h1>Transactions</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Ammount</th>
+      {% for col in column_names %}
+        <th>{{ col|capitalize }}</th>
+      {% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for transaction in transactions|reverse %}
+      <tr>
+        <td>£{{ '{:,.2f}'.format(transaction.ammount) }}</td>
+        {% for col in column_names %}
+          <td {% if not transaction[col] %}class="none"{% endif %}>{{ transaction[col] }}</td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<p>
+  <a href="/drop">Delete all transactions</a>
+</p>
+
+{% endblock %}

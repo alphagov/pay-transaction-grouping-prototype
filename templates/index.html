@@ -1,12 +1,11 @@
-{% extends "_base.html" %}
+{% extends "_admin_base.html" %}
 
 {% block content %}
 
-<p>
-  <a href="/create-payment-link">Create payment link</a>
-</p>
-<p>
-  <a href="/reports">View reports</a>
-</p>
+<h1>Dashboard</h1>
 
+<h2>Total income</h2>
+<div class="big-number">
+  {{ '£{:,.2f}'.format(total) }}
+</div>
 {% endblock %}

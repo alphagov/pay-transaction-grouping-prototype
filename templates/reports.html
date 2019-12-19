@@ -1,10 +1,6 @@
-{% extends "_base.html" %}
+{% extends "_admin_base.html" %}
 
 {% block content %}
-
-<p>
-  <a href="/">Home</a>
-</p>
 
 <h1>Reports</h1>
 
@@ -53,37 +49,5 @@
   </tbody>
 </table>
 {% endif %}
-
-
-
-<details>
-  <summary>Show transactions</summary>
-<h2>Transactions</h2>
-
-<table>
-  <thead>
-    <tr>
-      <th>Ammount</th>
-      {% for col in column_names %}
-        <th>{{ col|capitalize }}</th>
-      {% endfor %}
-    </tr>
-  </thead>
-  <tbody>
-    {% for transaction in transactions|reverse %}
-      <tr>
-        <td>£{{ '{:,.2f}'.format(transaction.ammount) }}</td>
-        {% for col in column_names %}
-          <td {% if not transaction[col] %}class="none"{% endif %}>{{ transaction[col] }}</td>
-        {% endfor %}
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
-<p>
-  <a href="/drop">Delete all transactions</a>
-</p>
-
-</details>
 
 {% endblock %}

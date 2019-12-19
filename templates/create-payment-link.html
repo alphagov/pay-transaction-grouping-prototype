@@ -1,10 +1,6 @@
-{% extends "_base.html" %}
+{% extends "_admin_base.html" %}
 
 {% block content %}
-
-<p>
-  <a href="/">Home</a>
-</p>
 
 <h1>Create payment link</h1>
 
@@ -14,7 +10,7 @@
     <label for="ammount">Ammount £</label>
     <input type="text" id="ammount" name="ammount" value="">
   </fieldset>
-  {% for i in range(10) %}
+  {% for i in range(5) %}
     <fieldset>
       <legend>Reporting data {{ i + 1 }}</legend>
       <label for="key1">Column name</label>

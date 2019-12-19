@@ -1,0 +1,16 @@
+{% extends "_base.html" %}
+
+{% block body %}
+  <nav>
+    <div class="service">
+      <a href="#">My services</a> > Example service
+    </div>
+    <a href="/">Dashboard</a>
+    <a href="/transactions">Transactions</a>
+    <a href="/reports">Reports</a>
+    <a href="/create-payment-link">Payment links</a>
+    <a href="/settings">Settings</a>
+  </nav>
+  {% block content %}
+  {% endblock %}
+{% endblock %}

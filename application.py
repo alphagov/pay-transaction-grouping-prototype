@@ -19,7 +19,7 @@ pandas.read_csv('./transactions.csv').to_sql(
     if_exists='append',
     index=False,
 )
-transactions = sqlalchemy.Table(
+transactions_table = sqlalchemy.Table(
     'transactions',
     metadata,
     autoload=True,
@@ -31,7 +31,12 @@ session = Session()
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+
+    total = session.query(
+        sqlalchemy.func.sum(transactions_table.c.ammount).label('total'),
+    ).scalar()
+
+    return render_template("index.html", total=total)
 
 
 @app.route("/create-payment-link", methods=['GET', 'POST'])
@@ -58,7 +63,7 @@ def create_payment_link():
 @app.route("/pay/<ammount>", methods=['GET', 'POST'])
 def payment_link(ammount):
     if request.method == 'POST':
-        insert = sqlalchemy.insert(transactions).values(
+        insert = sqlalchemy.insert(transactions_table).values(
             ammount=ammount,
             metadata=json.dumps({
                 k: v
@@ -79,27 +84,14 @@ def confirmation():
     return render_template("confirmation.html")
 
 
-@app.route("/reports")
-def reports():
-
-    grouping_columns = request.args.getlist('grouping_columns')
-
-    rich_transactions = [
+def _get_rich_transactions():
+    return [
         (ammount, json.loads(metadata))
-        for ammount, metadata in session.query(transactions).all()
+        for ammount, metadata in session.query(transactions_table).all()
     ]
 
-    column_names = set(chain.from_iterable((
-        metadata.keys() for ammount, metadata in rich_transactions
-    )))
 
-    for grouping_column in grouping_columns:
-        if grouping_column not in column_names:
-            return redirect(url_for('.reports'))
-
-    if not rich_transactions:
-        return render_template("no-reports.html")
-
+def _get_subquery(rich_transactions):
     stmts = [
         sqlalchemy.select([
             sqlalchemy.cast(
@@ -111,14 +103,37 @@ def reports():
                 sqlalchemy.literal(metadata.get(metadata_key)),
                 sqlalchemy.String,
             ).label(metadata_key)
-            for metadata_key in column_names
+            for metadata_key in _column_names(rich_transactions)
         ])
         for ammount, metadata in rich_transactions
     ]
     subquery = sqlalchemy.union_all(*stmts)
-    results = session.execute(
-        subquery.select()
-    )
+    return subquery
+
+
+def _column_names(rich_transactions):
+    return list(filter(None, set(chain.from_iterable((
+        metadata.keys() for ammount, metadata in rich_transactions
+    )))))
+
+
+@app.route("/reports")
+def reports():
+
+    grouping_columns = request.args.getlist('grouping_columns')
+
+    rich_transactions = _get_rich_transactions()
+
+    column_names = _column_names(rich_transactions)
+
+    for grouping_column in grouping_columns:
+        if grouping_column not in column_names:
+            return redirect(url_for('.reports'))
+
+    if not rich_transactions:
+        return render_template("no-reports.html")
+
+    subquery = _get_subquery(rich_transactions)
 
     if grouping_columns:
         grouping_columns = [
@@ -138,11 +153,28 @@ def reports():
 
     return render_template(
         "reports.html",
+        results=reporting_results,
+        column_names=column_names,
+    )
+
+
+@app.route("/transactions")
+def transactions():
+
+    rich_transactions = _get_rich_transactions()
+    column_names = _column_names(rich_transactions)
+    subquery = _get_subquery(rich_transactions)
+
+    results = session.execute(
+        subquery.select()
+    )
+
+    return render_template(
+        "transactions.html",
         transactions=[
             dict(result) for result in results.fetchall()
         ],
-        results=reporting_results,
-        column_names=list(filter(None, column_names)),
+        column_names=column_names,
     )
 
 
@@ -151,3 +183,8 @@ def drop():
     all = session.query(transactions)
     all.delete(synchronize_session=False)
     return redirect(url_for('.reports'))
+
+
+@app.route("/settings")
+def settings():
+    return render_template("settings.html")

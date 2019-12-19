@@ -1,7 +1,27 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  margin: 3em;
+  margin: 0 3em 3em 3em;
   font-size: 20px;
+}
+
+nav {
+  padding: 1em 0;
+  border-bottom: 2px solid black;
+  text-align: right;
+  position: relative;
+}
+
+nav a {
+  padding: 0 0 0 1em;
+}
+
+nav .service {
+  position: absolute;
+  left: 0;
+}
+
+nav .service a {
+  padding: 0;
 }
 
 input[type=text] {
@@ -18,7 +38,7 @@ input[type=checkbox] {
 fieldset {
   margin-bottom: 2em;
   padding: 2em 1em;
-  border: 2px solid black;
+  border: 1px solid black;
 }
 
 button {
