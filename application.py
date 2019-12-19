@@ -150,7 +150,7 @@ def _get_reporting_results(subquery, grouping_columns):
             sqlalchemy.func.count(subquery.c.ammount).label('transactions'),
             sqlalchemy.func.sum(subquery.c.ammount).label('total'),
             *grouping_columns
-        ).group_by(*grouping_columns).all()
+        ).group_by(*grouping_columns).order_by(*grouping_columns).all()
     return session.query(
         sqlalchemy.func.count(subquery.c.ammount).label('transactions'),
         sqlalchemy.func.sum(subquery.c.ammount).label('total'),
