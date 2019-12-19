@@ -104,3 +104,8 @@ details {
   font-size: 24px;
   font-weight: bold;
 }
+
+a,
+a:visited {
+  color: #0056ef;
+}
