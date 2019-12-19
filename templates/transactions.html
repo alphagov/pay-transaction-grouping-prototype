@@ -8,15 +8,17 @@
   <thead>
     <tr>
       <th>Ammount</th>
+      <th>Date</th>
       {% for col in column_names %}
         <th>{{ col|capitalize }}</th>
       {% endfor %}
     </tr>
   </thead>
   <tbody>
-    {% for transaction in transactions|reverse %}
+    {% for index, transaction in transactions %}
       <tr>
         <td>£{{ '{:,.2f}'.format(transaction.ammount) }}</td>
+        <td>{{ datemaker(index) }}</td>
         {% for col in column_names %}
           <td {% if not transaction[col] %}class="none"{% endif %}>{{ transaction[col] }}</td>
         {% endfor %}
