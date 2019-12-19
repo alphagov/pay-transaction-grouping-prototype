@@ -41,7 +41,7 @@ def home():
 
     total = session.query(
         sqlalchemy.func.sum(transactions_table.c.ammount).label('total'),
-    ).scalar()
+    ).scalar() or 0
 
     return render_template("index.html", total=total)
 
@@ -144,14 +144,14 @@ def reports():
 
     rich_transactions = _get_rich_transactions()
 
+    if not rich_transactions:
+        return render_template('no-reports.html')
+
     column_names = _column_names(rich_transactions)
 
     for grouping_column in grouping_columns:
         if grouping_column not in column_names:
             return redirect(url_for('.reports'))
-
-    if not rich_transactions:
-        return render_template("no-reports.html")
 
     subquery = _get_subquery(rich_transactions)
 
@@ -182,6 +182,8 @@ def reports():
 def transactions():
 
     rich_transactions = _get_rich_transactions()
+    if not rich_transactions:
+        return render_template('no-reports.html')
     column_names = _column_names(rich_transactions)
     subquery = _get_subquery(rich_transactions)
 
@@ -200,7 +202,9 @@ def transactions():
 
 @app.route("/drop")
 def drop():
-    all = session.query(transactions)
+    all = session.query(transactions_table)
+    all.delete(synchronize_session=False)
+    all = session.query(payment_links_table)
     all.delete(synchronize_session=False)
     return redirect(url_for('.reports'))
 
