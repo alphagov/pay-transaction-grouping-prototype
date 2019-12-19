@@ -1,5 +1,4 @@
 import json
-import pandas
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker
 from flask import Flask, render_template, request, redirect, url_for
@@ -12,24 +11,18 @@ engine = sqlalchemy.create_engine('sqlite:///transactions.sqlite')
 connection = engine.connect()
 metadata = sqlalchemy.MetaData()
 
-
-pandas.read_csv('./transactions.csv').to_sql(
-    'transactions',
-    connection,
-    if_exists='append',
-    index=False,
-)
 transactions_table = sqlalchemy.Table(
     'transactions',
     metadata,
-    autoload=True,
-    autoload_with=engine,
+    sqlalchemy.Column('ammount', sqlalchemy.Integer),
+    sqlalchemy.Column('metadata', sqlalchemy.String),
 )
 payment_links_table = sqlalchemy.Table(
     'payment_links',
     metadata,
     sqlalchemy.Column('link', sqlalchemy.String),
 )
+transactions_table.create(bind=engine, checkfirst=True)
 payment_links_table.create(bind=engine, checkfirst=True)
 
 Session = sessionmaker(bind=engine)
