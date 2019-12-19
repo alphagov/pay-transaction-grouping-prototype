@@ -46,6 +46,16 @@ def home():
     return render_template("index.html", total=total)
 
 
+@app.route("/services")
+def services():
+
+    total = session.query(
+        sqlalchemy.func.sum(transactions_table.c.ammount).label('total'),
+    ).scalar() or 0
+
+    return render_template("services.html", example_total=total)
+
+
 @app.route("/payment-links", methods=['GET', 'POST'])
 def payment_links():
     print(session.query(payment_links_table).all())

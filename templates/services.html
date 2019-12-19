@@ -1,0 +1,20 @@
+{% extends "_admin_base.html" %}
+
+{% block service_name %}
+  My services
+{% endblock %}
+
+{% block nav %}
+  <a href="/services">Services</a>
+  <a href="#">Reports</a>
+{% endblock %}
+
+{% block content %}
+
+<h1>My services</h1>
+
+<h2><a href="/">Example service</a></h2>
+<div class="big-number">
+  {{ '£{:,.2f}'.format(example_total) }} total income
+</div>
+{% endblock %}

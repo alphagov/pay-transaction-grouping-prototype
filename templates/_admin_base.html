@@ -3,13 +3,17 @@
 {% block body %}
   <nav>
     <div class="service">
-      <a href="#">My services</a> > Example service
+      {% block service_name %}
+        <a href="/services">My services</a> > Example service
+      {% endblock %}
     </div>
-    <a href="/">Dashboard</a>
-    <a href="/transactions">Transactions</a>
-    <a href="/reports">Reports</a>
-    <a href="/payment-links">Payment links</a>
-    <a href="/settings">Settings</a>
+    {% block nav %}
+      <a href="/">Dashboard</a>
+      <a href="/transactions">Transactions</a>
+      <a href="/reports">Reports</a>
+      <a href="/payment-links">Payment links</a>
+      <a href="/settings">Settings</a>
+    {% endblock %}
   </nav>
   {% block content %}
   {% endblock %}
