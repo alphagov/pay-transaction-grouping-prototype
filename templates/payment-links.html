@@ -1,0 +1,17 @@
+{% extends "_admin_base.html" %}
+
+{% block content %}
+
+<h1>Payment links</h1>
+
+{% for link in links %}
+  <p>
+    <a href="{{ link.link }}">https://www.gov.uk/pay/example-service/pay{{ link.link }}</a>
+  </p>
+{% endfor %}
+
+<div class="stick-at-bottom">
+  <a href="/create-payment-link"><button>Create a new payment link</button></a>
+</div>
+
+{% endblock %}

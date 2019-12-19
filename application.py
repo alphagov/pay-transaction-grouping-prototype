@@ -25,6 +25,13 @@ transactions_table = sqlalchemy.Table(
     autoload=True,
     autoload_with=engine,
 )
+payment_links_table = sqlalchemy.Table(
+    'payment_links',
+    metadata,
+    sqlalchemy.Column('link', sqlalchemy.String),
+)
+payment_links_table.create(bind=engine, checkfirst=True)
+
 Session = sessionmaker(bind=engine)
 session = Session()
 
@@ -39,6 +46,15 @@ def home():
     return render_template("index.html", total=total)
 
 
+@app.route("/payment-links", methods=['GET', 'POST'])
+def payment_links():
+    print(session.query(payment_links_table).all())
+    return render_template(
+        "payment-links.html",
+        links=session.query(payment_links_table).all()
+    )
+
+
 @app.route("/create-payment-link", methods=['GET', 'POST'])
 def create_payment_link():
     if request.method == 'POST':
@@ -50,11 +66,15 @@ def create_payment_link():
             ammount = int(request.form.get('ammount', 0))
         except ValueError:
             return "ammount must be a whole number", 400
-        return redirect(url_for(
-            '.payment_link',
-            ammount=ammount,
-            **metadata,
-        ))
+        insert = sqlalchemy.insert(payment_links_table).values(
+            link=url_for(
+                '.payment_link',
+                ammount=ammount,
+                **metadata,
+            ),
+        )
+        session.execute(insert)
+        return redirect(url_for('.payment_links'))
     return render_template(
         "create-payment-link.html",
     )
