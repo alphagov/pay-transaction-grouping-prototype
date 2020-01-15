@@ -8,7 +8,8 @@
     </div>
     {% for endpoint, label in [
       ('services', 'Services'),
-      ('services_reports', 'Reports')
+      ('services_transactions', 'Transactions'),
+      ('services_reports', 'Reports'),
     ] %}
       {{ nav_item(endpoint, label)}}
     {% endfor %}

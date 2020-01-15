@@ -215,6 +215,34 @@ def services_reports():
     )
 
 
+@app.route("/services/transactions")
+def services_transactions():
+
+    rich_transactions = list(_get_rich_transactions())
+    if not rich_transactions:
+        return render_template('services-no-reports.html')
+    column_names = _column_names(rich_transactions)
+    subquery = _get_subquery(rich_transactions)
+
+    results = session.execute(
+        subquery.select()
+    )
+
+    def datemaker(i):
+        return (
+            datetime.utcnow() - timedelta(seconds=(i * 2345))
+        ).strftime('%d %b %Y at %-I:%M%p')
+
+    return render_template(
+        "services-transactions.html",
+        transactions=enumerate(reversed([
+            dict(result) for result in results.fetchall()
+        ])),
+        column_names=column_names,
+        datemaker=datemaker,
+    )
+
+
 @app.route("/transactions")
 def transactions():
 
