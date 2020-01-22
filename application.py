@@ -234,25 +234,13 @@ def services_transactions():
     rich_transactions = list(_get_rich_transactions())
     if not rich_transactions:
         return render_template('services-no-reports.html')
-    column_names = _column_names(rich_transactions)
-    subquery = _get_subquery(rich_transactions)
 
-    results = session.execute(
-        subquery.select()
-    )
-
-    def datemaker(i):
-        return (
-            datetime.utcnow() - timedelta(seconds=(i * 2345))
-        ).strftime('%d %b %Y at %-I:%M%p')
+    transactions, column_names = get_transactions_and_column_names(rich_transactions)
 
     return render_template(
         "services-transactions.html",
-        transactions=enumerate(reversed([
-            dict(result) for result in results.fetchall()
-        ])),
+        transactions=transactions,
         column_names=column_names,
-        datemaker=datemaker,
     )
 
 
@@ -262,6 +250,17 @@ def transactions():
     rich_transactions = list(_get_rich_transactions())
     if not rich_transactions:
         return render_template('no-reports.html')
+
+    transactions, column_names = get_transactions_and_column_names(rich_transactions)
+    return render_template(
+        "transactions.html",
+        transactions=transactions,
+        column_names=column_names,
+    )
+
+
+def get_transactions_and_column_names(rich_transactions):
+
     column_names = _column_names(rich_transactions)
     subquery = _get_subquery(rich_transactions)
 
@@ -274,14 +273,26 @@ def transactions():
             datetime.utcnow() - timedelta(seconds=(i * 2345))
         ).strftime('%d %b %Y at %-I:%M%p')
 
-    return render_template(
-        "transactions.html",
-        transactions=enumerate(reversed([
-            dict(result) for result in results.fetchall()
-        ])),
-        column_names=column_names,
-        datemaker=datemaker,
-    )
+    transactions = reversed([
+        [
+            {'text': '£{:,.2f}'.format(result.ammount)},
+            {'text': datemaker(1)},
+        ] + [
+            {'text': dict(result).get(column_name)}
+            for column_name in column_names
+        ]
+        for result in results.fetchall()
+    ])
+
+    column_names = [
+        {'text': 'Ammount'},
+        {'text': 'Date'},
+    ] + [
+        {'text': column_name}
+        for column_name in column_names
+    ]
+
+    return transactions, column_names
 
 
 @app.route("/drop")
@@ -318,7 +329,7 @@ def populate():
             metadata=json.dumps(metadata),
         )
         session.execute(insert)
-    return redirect(url_for('.reports'))
+    return redirect(url_for('.transactions'))
 
 
 @app.route("/settings")

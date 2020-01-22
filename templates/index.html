@@ -4,17 +4,15 @@
 
 <h1 class="govuk-heading-l">Dashboard</h1>
 
-<h2>Total income</h2>
-<div class="big-number">
+<h2 class="govuk-heading-m govuk-!-margin-bottom-2">Total income</h2>
+<div class="govuk-body govuk-!-margin-bottom-7">
   {{ '£{:,.2f}'.format(total) }}
-  <br>
-  <br><br>
 </div>
 
-<p>
-  <a href="/create-payment-link">Create a payment link</a>
+<p class="govuk-body">
+  <a class="govuk-link" href="/create-payment-link">Create a payment link</a>
 </p>
-<p>
-  <a href="/transactions">View transactions</a>
+<p class="govuk-body">
+  <a class="govuk-link" href="/transactions">View transactions</a>
 </p>
 {% endblock %}
