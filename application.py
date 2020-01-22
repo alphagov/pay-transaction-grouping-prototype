@@ -2,7 +2,7 @@ import os
 import jinja2
 import json
 import sqlalchemy
-import uuid
+from collections import OrderedDict
 from sqlalchemy.orm import sessionmaker
 from flask import Flask, render_template, request, redirect, url_for
 from govuk_frontend_jinja.flask_ext import init_govuk_frontend
@@ -122,10 +122,11 @@ def confirmation(ammount):
 
 def _get_rich_transactions(extra_columns=None):
     for ammount, metadata in session.query(transactions_table).all():
-        metadata = json.loads(metadata)
+        out = OrderedDict()
         for key, value in (extra_columns or []):
-            metadata.update({key: value})
-        yield ammount, metadata
+            out.update({key: value})
+        out.update(json.loads(metadata))
+        yield ammount, out
 
 
 def _get_subquery(rich_transactions):
@@ -231,7 +232,12 @@ def services_reports():
 @app.route("/services/transactions")
 def services_transactions():
 
-    rich_transactions = list(_get_rich_transactions())
+    rich_transactions = list(_get_rich_transactions(
+        extra_columns=[
+            ('Service', 'Example service'),
+            ('Merchant ID', 'EXAMPLE_SERVICE_0345_LIVE'),
+        ]
+    ))
     if not rich_transactions:
         return render_template('services-no-reports.html')
 
