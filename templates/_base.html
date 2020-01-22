@@ -1,11 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>GOV.UK Pay grouping prototype</title>
-  <link rel="stylesheet" media="screen" href="/static/main.css" />
-</head>
-<body>
+{% extends "template.njk" %}
+{% from 'components/header/macro.njk' import govukHeader %}
+
+{% block head %}
+  <link rel="stylesheet" media="screen" href="/static/all.css" />
+{% endblock %}
+{% block headIcons %}{% endblock %}
+{% block header %}
+{{ govukHeader({
+  'productName': 'Pay'
+}) }}
+{% endblock %}
+
+{% block content %}
   {% block body %}
   {% endblock %}
-</body>
-</html>
+{% endblock %}

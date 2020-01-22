@@ -1,0 +1,32 @@
+{
+  "name": "pay-group-by",
+  "version": "0.0.1",
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alphagov/pay-transaction-grouping-prototype.git"
+  },
+  "author": "me@quis.cc",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alphagov/pay-transaction-grouping-prototype/issues"
+  },
+  "homepage": "https://github.com/alphagov/pay-transaction-grouping-prototype#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/core": "7.4.0",
+    "@babel/preset-env": "7.4.2",
+    "govuk-frontend": "^3.5.0",
+    "gulp": "4.0.0",
+    "gulp-add-src": "1.0.0",
+    "gulp-babel": "^8.0.0",
+    "gulp-better-rollup": "^4.0.1",
+    "gulp-clean-css": "4.2.0",
+    "gulp-concat": "2.6.1",
+    "gulp-css-url-adjuster": "^0.2.3",
+    "gulp-include": "2.3.1",
+    "gulp-prettyerror": "^1.2.1",
+    "gulp-sass": "4.0.2",
+    "rollup": "^1.29.1"
+  }
+}

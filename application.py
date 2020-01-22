@@ -1,11 +1,22 @@
+import os
+import jinja2
 import json
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker
 from flask import Flask, render_template, request, redirect, url_for
+from govuk_frontend_jinja.flask_ext import init_govuk_frontend
 from datetime import datetime, timedelta
 from itertools import chain
 
 app = Flask(__name__)
+
+repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+app.jinja_loader = jinja2.FileSystemLoader([
+    os.path.join(repo_root, 'templates/vendor/govuk'),
+    os.path.join(repo_root, 'templates'),
+])
+
+init_govuk_frontend(app)
 
 
 engine = sqlalchemy.create_engine('sqlite:///transactions.sqlite')

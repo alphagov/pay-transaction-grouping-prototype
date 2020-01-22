@@ -1,3 +1,7 @@
 __pycache__
 transactions.sqlite
 transactions.sqlite-journal
+node_modules
+static
+templates/vendor
+package-lock.json

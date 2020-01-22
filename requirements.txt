@@ -3,6 +3,7 @@ entrypoints==0.3
 flake8==3.7.9
 Flask==1.1.1
 Flask-CLI==0.4.0
+git+https://github.com/alphagov/govuk-frontend-jinja.git
 itsdangerous==1.1.0
 Jinja2==2.10.3
 MarkupSafe==1.1.1
