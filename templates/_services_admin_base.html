@@ -1,8 +1,8 @@
 {% from 'macros/nav.html' import nav_item %}
-{% extends "_base.html" %}
+{% extends "_admin_base.html" %}
 
 {% block body %}
-  <nav>
+  <nav class="sub">
     <div class="service">
       My services
     </div>
@@ -14,6 +14,6 @@
       {{ nav_item(endpoint, label)}}
     {% endfor %}
   </nav>
-  {% block content %}
+  {% block service_content %}
   {% endblock %}
 {% endblock %}

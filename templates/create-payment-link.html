@@ -1,8 +1,9 @@
+{% from "components/button/macro.njk" import govukButton %}
 {% extends "_admin_base.html" %}
 
 {% block service_content %}
 
-<h1>Create payment link</h1>
+<h1 class="govuk-heading-l">Create payment link</h1>
 
 <form method="post">
   <fieldset>
@@ -20,7 +21,9 @@
     </fieldset>
   {% endfor %}
   <div class="stick-at-bottom">
-    <button type="submit">Create</button>
+    {{ govukButton({
+      'text': "Create"
+    }) }}
   </div>
 </form>
 

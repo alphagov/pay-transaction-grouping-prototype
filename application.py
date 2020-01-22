@@ -2,6 +2,7 @@ import os
 import jinja2
 import json
 import sqlalchemy
+import uuid
 from sqlalchemy.orm import sessionmaker
 from flask import Flask, render_template, request, redirect, url_for
 from govuk_frontend_jinja.flask_ext import init_govuk_frontend
@@ -17,6 +18,7 @@ app.jinja_loader = jinja2.FileSystemLoader([
 ])
 
 init_govuk_frontend(app)
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 
 engine = sqlalchemy.create_engine('sqlite:///transactions.sqlite')

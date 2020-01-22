@@ -1,13 +1,16 @@
+{% from "components/button/macro.njk" import govukButton %}
 {% extends "_public_base.html" %}
 
 {% block content %}
 
-<h1>Pay</h1>
+<h1 class="govuk-heading-l">Pay</h1>
 
-<p>£{{ ammount }}</p>
+<p class="govuk-body">£{{ ammount }}</p>
 
 <form method="post">
-<button type="submit">OK, pay</button>
+  {{ govukButton({
+    'text': "OK, pay"
+  }) }}
 </form>
 
 {% endblock %}

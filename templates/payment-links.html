@@ -1,8 +1,9 @@
+{% from "components/button/macro.njk" import govukButton %}
 {% extends "_admin_base.html" %}
 
 {% block service_content %}
 
-<h1>Payment links</h1>
+<h1 class="govuk-heading-l">Payment links</h1>
 
 {% for link in links %}
   <p>
@@ -11,7 +12,10 @@
 {% endfor %}
 
 <div class="stick-at-bottom">
-  <a href="/create-payment-link"><button>Create a new payment link</button></a>
+  {{ govukButton({
+    'text': "Create a new payment link",
+    'href': "/create-payment-link"
+  }) }}
 </div>
 
 {% endblock %}

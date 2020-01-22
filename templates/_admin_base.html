@@ -3,11 +3,18 @@
 
 {% block header %}
   {{ govukHeader({
-    'productName': 'Pay'
+    'productName': 'Pay',
+    'navigationClasses': 'govuk-header__navigation--end',
+    'navigation': [
+      {
+        'href': "#",
+        'text': "Sign out"
+      }
+    ]
   }) }}
 {% endblock %}
 {% block body %}
-  <nav>
+  <nav class="sub">
     <div class="service">
       {% block service_name %}
         <a href="/services">My services</a> > Example service

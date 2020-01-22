@@ -59,15 +59,20 @@ const copy = {
 const sass = () => {
   return src([
       paths.src + 'main.scss'
-      // paths.govuk_frontend + 'all.scss'
   ])
     .pipe(plugins.prettyerror())
     .pipe(plugins.sass({
       outputStyle: 'nested',
+      includePaths: [
+        paths.govuk_frontend
+      ]
     }))
     .pipe(plugins.cssUrlAdjuster({
       replace: [staticPathMatcher, '/static/']
     }))
+    .pipe(plugins.concat(
+      'all.css'
+    ))
     .pipe(dest(paths.dist))
 };
 

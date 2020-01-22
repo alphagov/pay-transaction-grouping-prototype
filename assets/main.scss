@@ -1,30 +1,37 @@
-nav {
-  padding: 1em 0;
-  border-bottom: 2px solid black;
+@import 'all.scss';
+
+nav.sub {
+  @include govuk-font(19);
+  padding: govuk-spacing(3) 0;
+  border-bottom: 1px solid govuk-colour('mid-grey');
   text-align: right;
   position: relative;
+  margin: (govuk-spacing(7) * -1) 0 govuk-spacing(5) 0;
+
+  a {
+    margin: 0 0 0 govuk-spacing(3);
+    &.selected {
+      color: black;
+      text-decoration: none;
+      border-bottom: 4px solid black;
+      padding-bottom: govuk-spacing(3) - 2px;
+    }
+  }
+
+  .service {
+
+    position: absolute;
+    left: 0;
+
+    a {
+      padding: 0;
+      margin: 0;
+    }
+
+  }
+
 }
 
-nav a {
-  margin: 0 0 0 1em;
-}
-
-nav a.selected {
-  color: black;
-  text-decoration: none;
-  border-bottom: 3px solid black;
-  padding-bottom: calc(1em - 3px);
-}
-
-nav .service {
-  position: absolute;
-  left: 0;
-}
-
-nav .service a {
-  padding: 0;
-  margin: 0;
-}
 
 input[type=text] {
   border: 2px solid black;
