@@ -1,6 +1,11 @@
 {% from 'macros/nav.html' import nav_item %}
 {% extends "_base.html" %}
 
+{% block header %}
+  {{ govukHeader({
+    'productName': 'Pay'
+  }) }}
+{% endblock %}
 {% block body %}
   <nav>
     <div class="service">
