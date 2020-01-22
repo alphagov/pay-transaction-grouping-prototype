@@ -282,12 +282,12 @@ def get_transactions_and_column_names(rich_transactions):
     transactions = reversed([
         [
             {'text': '£{:,.2f}'.format(result.ammount)},
-            {'text': datemaker(1)},
+            {'text': datemaker(index)},
         ] + [
             {'text': dict(result).get(column_name)}
             for column_name in column_names
         ]
-        for result in results.fetchall()
+        for index, result in enumerate(results.fetchall())
     ])
 
     column_names = [
