@@ -6,8 +6,8 @@
 <h1 class="govuk-heading-l">Payment links</h1>
 
 {% for link in links %}
-  <p>
-    <a href="{{ link.link }}">https://www.gov.uk/pay/example-service/pay{{ link.link }}</a>
+  <p class="govuk-body">
+    <a class="govuk-link govuk-link--no-visited-state" href="{{ link.link }}">https://www.gov.uk/pay/example-service{{ link.link }}</a>
   </p>
 {% endfor %}
 
