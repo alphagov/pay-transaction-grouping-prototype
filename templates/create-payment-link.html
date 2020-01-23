@@ -1,4 +1,5 @@
 {% from "components/button/macro.njk" import govukButton %}
+{% from "components/input/macro.njk" import govukInput %}
 {% extends "_admin_base.html" %}
 
 {% block service_content %}
@@ -8,9 +9,16 @@
 <form method="post">
   <fieldset>
     <legend>What the user sees</legend>
-    <label for="ammount">Ammount £</label>
-    <input type="text" id="ammount" name="ammount" value="">
+    {{ govukInput({
+      'label': {
+        'text': "Ammount (£)"
+      },
+      'classes': "govuk-input--width-4",
+      'id': "ammount",
+      'name': "ammount"
+    }) }}
   </fieldset>
+
   {% for i in range(5) %}
     <fieldset>
       <legend>Reporting data {{ i + 1 }}</legend>
