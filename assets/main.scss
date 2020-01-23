@@ -10,10 +10,11 @@ nav.sub {
 
   a {
     margin: 0 0 0 govuk-spacing(3);
+    transition: box-shadow 0.3 ease-in;
     &.selected {
       color: black;
       text-decoration: none;
-      border-bottom: 4px solid black;
+      box-shadow: 0 4px black;
       padding-bottom: govuk-spacing(3) - 2px;
     }
   }

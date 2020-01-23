@@ -1,8 +1,10 @@
 {% macro nav_item(endpoint, label) %}
   <a
     href="{{ url_for(endpoint) }}"
+    class="govuk-link govuk-link--no-visited-state
     {% if request.endpoint == endpoint %}
-      class="selected"
+      selected
     {% endif %}
+    "
   >{{ label }}</a>
 {% endmacro %}
