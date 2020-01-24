@@ -1,0 +1,37 @@
+{% from "components/button/macro.njk" import govukButton %}
+{% from "components/input/macro.njk" import govukInput %}
+{% from "components/textarea/macro.njk" import govukTextarea %}
+{% extends "_admin_base.html" %}
+
+{% block service_content %}
+
+<h1 class="govuk-heading-l">Check</h1>
+
+{{ govukTable({
+  'head': column_names,
+  'rows': [
+    [
+      {'text': 'Title'},
+      {'text': title},
+    ],
+    [
+      {'text': 'Description'},
+      {'text': description},
+    ],
+    [
+      {'text': 'Ammount'},
+      {'text': ammount},
+    ],
+  ]
+}) }}
+
+{{ govukButton({
+  text: "Add reporting info",
+  classes: "govuk-button--secondary"
+}) }}
+
+{{ govukButton({
+  text: "Create payment link"
+}) }}
+
+{% endblock %}

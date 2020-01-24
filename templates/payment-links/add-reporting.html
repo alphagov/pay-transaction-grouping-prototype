@@ -1,0 +1,38 @@
+{% from "components/button/macro.njk" import govukButton %}
+{% from "components/input/macro.njk" import govukInput %}
+{% from "components/textarea/macro.njk" import govukTextarea %}
+{% extends "_admin_base.html" %}
+
+{% block service_content %}
+
+<h1 class="govuk-heading-l">Add reporting</h1>
+
+<p class="govuk-body">
+  Explain what this is
+</p>
+
+<form method="post">
+
+  {{ govukInput({
+    'label': {
+      'text': 'Column name'
+    },
+    'id': 'key',
+    'name': 'key'
+  }) }}
+
+  {{ govukInput({
+    'label': {
+      'text': 'Column value'
+    },
+    'id': 'value',
+    'name': 'value'
+  }) }}
+
+  {{ govukButton({
+    'text': 'Create'
+  }) }}
+
+</form>
+
+{% endblock %}

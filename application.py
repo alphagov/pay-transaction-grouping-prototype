@@ -2,12 +2,15 @@ import os
 import jinja2
 import json
 import sqlalchemy
+import uuid
 from collections import OrderedDict
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.dialects import postgresql
 from flask import Flask, render_template, request, redirect, url_for
 from govuk_frontend_jinja.flask_ext import init_govuk_frontend
 from datetime import datetime, timedelta
 from itertools import chain
+from slugify import slugify
 
 app = Flask(__name__)
 
@@ -34,7 +37,20 @@ transactions_table = sqlalchemy.Table(
 payment_links_table = sqlalchemy.Table(
     'payment_links',
     metadata,
-    sqlalchemy.Column('link', sqlalchemy.String),
+    sqlalchemy.Column(
+        'id',
+        postgresql.UUID(as_uuid=True),
+        unique=True,
+        nullable=False,
+        primary_key=True,
+    ),
+    sqlalchemy.Column('created', sqlalchemy.Boolean, default=False),
+    sqlalchemy.Column('title', sqlalchemy.String),
+    sqlalchemy.Column('slug', sqlalchemy.String),
+    sqlalchemy.Column('description', sqlalchemy.String),
+    sqlalchemy.Column('ammount', sqlalchemy.Integer),
+    sqlalchemy.Column('metadata', sqlalchemy.String),
+
 )
 transactions_table.create(bind=engine, checkfirst=True)
 payment_links_table.create(bind=engine, checkfirst=True)
@@ -63,55 +79,113 @@ def services():
     return render_template("services.html", example_total=total)
 
 
-@app.route("/payment-links", methods=['GET', 'POST'])
+payment_links = Blueprint(
+    'payment_links',
+    __name__,
+    template_folder='payment-links',
+    url_prefix='/payment-links',
+)
+app.register_blueprint(payment_links)
+
+
+@payment_links.route("/", methods=['GET', 'POST'])
 def payment_links():
     return render_template(
-        "payment-links.html",
-        links=session.query(payment_links_table).all()
+        "index.html",
+        links=session.query(payment_links_table).filter_by(created=True).all()
     )
 
 
-@app.route("/create-payment-link", methods=['GET', 'POST'])
+@payment_links.route("/create")
 def create_payment_link():
+    id = uuid.uuid4()
+    insert = sqlalchemy.insert(payment_links_table).values(id=id)
+    session.execute(insert)
+    return redirect(url_for(
+        '.title_and_description',
+        id=id,
+    ))
+
+
+@payment_links.route("/<id>/title-and-description", methods=['GET', 'POST'])
+def title_and_description(id):
     if request.method == 'POST':
-        metadata = {
-            request.form[k]: request.form[k.replace('key', 'value')]
-            for k, v in request.form.items() if k.startswith('key')
-        }
+        update = session.query(payment_links_table).get(id).update({
+            'title': request.form['title'],
+            'description': request.form['description'],
+            'slug': slugify(request.form['title']),
+        })
+        session.execute(update)
+        return redirect(url_for('.ammount', id=id))
+    return render_template(
+        "title-and-description.html",
+    )
+
+
+@payment_links.route("/<id>/ammount", methods=['GET', 'POST'])
+def ammount(id):
+    if request.method == 'POST':
         try:
             ammount = int(request.form.get('ammount', 0))
         except ValueError:
             return "ammount must be a whole number", 400
-        insert = sqlalchemy.insert(payment_links_table).values(
-            link=url_for(
-                '.payment_link',
-                ammount=ammount,
-                **metadata,
-            ),
-        )
-        session.execute(insert)
-        return redirect(url_for('.payment_links'))
+        update = session.query(payment_links_table).get(id).update({
+            'ammount': ammount,
+        })
+        session.execute(update)
+        return redirect(url_for('.summary'))
     return render_template(
-        "create-payment-link.html",
+        "ammount.html",
     )
 
 
-@app.route("/pay/<int:ammount>", methods=['GET', 'POST'])
-def payment_link(ammount):
+@payment_links.route("/<id>/summary", methods=['GET', 'POST'])
+def title_and_description(id):
+    link = session.query(payment_links_table).get(id)
+    if request.method == 'POST':
+        update = link.update({
+            'created': True
+        })
+        session.execute(update)
+    return render_template(
+        "summary.html",
+        title=link.title,
+        description=link.description,
+        ammount=link.ammount,
+    )
+
+
+@payment_links.route("/<id>/add-reporting", methods=['GET', 'POST'])
+def add_reporting(id):
+    link = session.query(payment_links_table).get(id)
+    if request.method == 'POST':
+        metadata = link.metadata or {}
+        metadata.update({
+            request.form['key']: request.form['value']
+        })
+        update = link.update({
+            'metadata': JSON.dumps(metadata),
+        })
+        session.execute(update)
+        return redirect(url_for('.payment_links'))
+    return render_template(
+        "payment-links/add-reporting.html",
+    )
+
+
+@app.route("/pay/<slug>", methods=['GET', 'POST'])
+def payment_link(slug):
+    link = session.query(payment_links_table).get(slug=slug)
     if request.method == 'POST':
         insert = sqlalchemy.insert(transactions_table).values(
-            ammount=ammount,
-            metadata=json.dumps({
-                k: v
-                for k, v in request.args.items()
-                if k and v
-            }),
+            ammount=link.ammount,
+            metadata=link.metadata,
         )
         session.execute(insert)
-        return redirect(url_for('confirmation', ammount=ammount))
+        return redirect(url_for('confirmation', ammount=link.ammount))
     return render_template(
         "pay.html",
-        ammount=ammount,
+        ammount=link.ammount,
     )
 
 
