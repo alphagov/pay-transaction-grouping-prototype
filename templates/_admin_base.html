@@ -22,10 +22,10 @@
     </div>
     {% block nav %}
       {% for endpoint, label in [
-        ('home', 'Dashboard'),
-        ('transactions', 'Transactions'),
-        ('payment_links', 'Payment links'),
-        ('settings', 'Settings')
+        ('main.home', 'Dashboard'),
+        ('main.transactions', 'Transactions'),
+        ('payment_links.index', 'Payment links'),
+        ('main.settings', 'Settings')
       ] %}
         {{ nav_item(endpoint, label)}}
       {% endfor %}
