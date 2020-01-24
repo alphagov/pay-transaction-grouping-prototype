@@ -5,33 +5,47 @@
 
 {% block service_content %}
 
-<h1 class="govuk-heading-l">Check</h1>
+<h1 class="govuk-heading-l">Payment link</h1>
 
 {{ govukTable({
-  'head': column_names,
+  'head': [],
   'rows': [
     [
       {'text': 'Title'},
-      {'text': title},
+      {'text': link.title},
     ],
     [
       {'text': 'Description'},
-      {'text': description},
+      {'text': link.description},
     ],
     [
       {'text': 'Ammount'},
-      {'text': ammount},
+      {'text': link.ammount},
     ],
   ]
 }) }}
 
-{{ govukButton({
-  text: "Add reporting info",
-  classes: "govuk-button--secondary"
-}) }}
+{% if metadata %}
+  <h2 class="govuk-heading-m">Reporting columns</h2>
+  {{ govukTable({
+    'head': [],
+    'rows': metadata
+  }) }}
+  {{ govukButton({
+    'text': 'Add more reporting columns',
+    'href': '/payment-links/{id}/add-reporting'.format(link.id),
+    'classes': "govuk-button--secondary"
+  }) }}
+{% else %}
+  {{ govukButton({
+    'text': 'Add reporting columns',
+    'href': '/payment-links/{id}/add-reporting'.format(link.id),
+    'classes': 'govuk-button--secondary'
+  }) }}
+{% endif %}
 
 {{ govukButton({
-  text: "Create payment link"
+  'text': 'Create payment link'
 }) }}
 
 {% endblock %}

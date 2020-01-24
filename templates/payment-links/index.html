@@ -7,10 +7,16 @@
 
 {% for link in links %}
   <p class="govuk-body">
-    <a class="govuk-link govuk-link--no-visited-state" href="/pay/{{ link.slug }}">https://www.gov.uk/pay/example-service/{{ link.slug }}</a>
-    <a class="govuk-link govuk-link--no-visited-state" href="/payment-links/{{ link.id }}/summary">Edit</a>
+    <a class="govuk-link govuk-link--no-visited-state" href="/payment-links/{{ link.id }}/summary">{{ link.title }}</a>
+    <div class="govuk-hint">https://www.gov.uk/pay/example-service/{{ link.slug }}</div>
   </p>
 {% endfor %}
+
+{% if not links %}
+  <p class="govuk-body">
+    Explain payment links
+  </p>
+{% endif %}
 
 <div class="stick-at-bottom">
   {{ govukButton({

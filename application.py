@@ -149,9 +149,15 @@ def title_and_description(id):
         session.execute(update)
     return render_template(
         "summary.html",
-        title=link.title,
-        description=link.description,
-        ammount=link.ammount,
+        link=link,
+        metadata=[
+            [
+                {'text': key},
+                {'text': value},
+                {'html': '<a href="#">Edit</a>'},
+            ]
+            for key, value in (link.metadata or {}).items()
+        ]
     )
 
 
