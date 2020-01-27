@@ -2,14 +2,30 @@ import os
 import jinja2
 from flask import Flask
 from govuk_frontend_jinja.flask_ext import init_govuk_frontend
-from main import main
+from main import dashboard, services, transactions, pay, settings
 from payment_links import payment_links
 
 app = Flask(__name__)
 
 
 app.register_blueprint(
-    main,
+    dashboard,
+)
+app.register_blueprint(
+    services,
+    url_prefix='/services',
+)
+app.register_blueprint(
+    transactions,
+    url_prefix='/transactions',
+)
+app.register_blueprint(
+    pay,
+    url_prefix='/pay',
+)
+app.register_blueprint(
+    settings,
+    url_prefix='/settings',
 )
 app.register_blueprint(
     payment_links,

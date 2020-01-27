@@ -56,7 +56,13 @@
   }) }}
 {% endif %}
 
-{% if not created %}
+{% if created %}
+  <form method="post">
+    {{ govukButton({
+      'text': 'Save'
+    }) }}
+  </form>
+{% else %}
   <form method="post">
     {{ govukButton({
       'text': 'Create payment link'

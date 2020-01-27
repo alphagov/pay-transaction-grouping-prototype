@@ -7,13 +7,33 @@ from itertools import chain
 from db import session, payment_links_table, transactions_table
 
 
-main = Blueprint(
-    'main',
+dashboard = Blueprint(
+    'dashboard',
+    __name__,
+)
+
+services = Blueprint(
+    'services',
+    __name__,
+)
+
+transactions = Blueprint(
+    'transactions',
+    __name__,
+)
+
+pay = Blueprint(
+    'pay',
+    __name__,
+)
+
+settings = Blueprint(
+    'settings',
     __name__,
 )
 
 
-@main.route("/")
+@dashboard.route("/")
 def home():
 
     total = session.query(
@@ -23,8 +43,8 @@ def home():
     return render_template("index.html", total=total)
 
 
-@main.route("/services")
-def services():
+@services.route("/")
+def services_index():
 
     total = session.query(
         sqlalchemy.func.sum(transactions_table.c.ammount).label('total'),
@@ -33,7 +53,7 @@ def services():
     return render_template("services.html", example_total=total)
 
 
-@main.route("/pay/<slug>", methods=['GET', 'POST'])
+@pay.route("/<slug>", methods=['GET', 'POST'])
 def payment_link(slug):
     link = session.query(payment_links_table).get(slug=slug)
     if request.method == 'POST':
@@ -49,7 +69,7 @@ def payment_link(slug):
     )
 
 
-@main.route("/confirmation/<int:ammount>", methods=['GET', 'POST'])
+@pay.route("/confirmation/<int:ammount>", methods=['GET', 'POST'])
 def confirmation(ammount):
     return render_template("confirmation.html", ammount=ammount)
 
@@ -106,7 +126,7 @@ def _get_reporting_results(subquery, grouping_columns):
     ).all()
 
 
-@main.route("/reports")
+@transactions.route("/reports")
 def reports():
 
     grouping_columns = request.args.getlist('grouping_columns')
@@ -132,7 +152,7 @@ def reports():
     )
 
 
-@main.route("/services/reports")
+@services.route("/reports")
 def services_reports():
 
     grouping_columns = request.args.getlist('grouping_columns')
@@ -163,7 +183,7 @@ def services_reports():
     )
 
 
-@main.route("/services/transactions")
+@transactions.route("/services")
 def services_transactions():
 
     rich_transactions = list(_get_rich_transactions(
@@ -184,8 +204,8 @@ def services_transactions():
     )
 
 
-@main.route("/transactions")
-def transactions():
+@transactions.route("/")
+def transactions_index():
 
     rich_transactions = list(_get_rich_transactions())
     if not rich_transactions:
@@ -235,16 +255,16 @@ def get_transactions_and_column_names(rich_transactions):
     return transactions, column_names
 
 
-@main.route("/drop")
+@settings.route("/drop")
 def drop():
     all = session.query(transactions_table)
     all.delete(synchronize_session=False)
     all = session.query(payment_links_table)
     all.delete(synchronize_session=False)
-    return redirect(url_for('.reports'))
+    return redirect(url_for('transactions.transactions_index'))
 
 
-@main.route("/populate")
+@settings.route("/populate")
 def populate():
     for ammount, metadata in ([
         (100, {'post': 'Bangkok', 'fee type': 'Fee 19', 'country': 'Thailand'}),
@@ -269,9 +289,9 @@ def populate():
             metadata=json.dumps(metadata),
         )
         session.execute(insert)
-    return redirect(url_for('.transactions'))
+    return redirect(url_for('transactions.transactions_index'))
 
 
-@main.route("/settings")
-def settings():
+@settings.route("/")
+def settings_index():
     return render_template("settings.html")
