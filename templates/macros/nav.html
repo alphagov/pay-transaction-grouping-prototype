@@ -2,7 +2,7 @@
   <a
     href="{{ url_for(endpoint) }}"
     class="govuk-link govuk-link--no-visited-state
-    {% if request.endpoint == endpoint %}
+    {% if request.endpoint.startswith(endpoint.split('.')[0]) %}
       selected
     {% endif %}
     "

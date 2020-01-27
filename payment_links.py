@@ -1,6 +1,7 @@
+import json
 import sqlalchemy
 from db import session, payment_links_table
-from flask import Blueprint, render_template, request, redirect, url_for, abort
+from flask import Blueprint, abort, render_template, request, redirect, url_for
 from slugify import slugify
 
 
@@ -10,24 +11,46 @@ payment_links = Blueprint(
 )
 
 
-def get_payment_link_by_id(id):
+def update_payment_link_by_id(id, **kwargs):
     try:
-        result = session.execute(
-            payment_links_table.select().where(
-                payment_links_table.columns.id == int(id)
-            )
+        update = payment_links_table.update().values(
+            **kwargs
+        ).where(
+            payment_links_table.c.id == int(id)
         )
-        return result.fetchone()
+        session.execute(update)
     except Exception as e:
         print(e)
+        return redirect(url_for('.create_payment_link'))
+
+
+def get_payment_link_by_id(id):
+    select = sqlalchemy.select([payment_links_table]).where(
+        payment_links_table.c.id == int(id)
+    )
+    result = session.execute(select).fetchone()
+    if not result:
         abort(404)
+    id, created, title, slug, description, ammount, metadata = (
+        session.execute(select).fetchone()
+    )
+    return {
+        'id': id,
+        'created': created,
+        'title': title,
+        'slug': slug,
+        'description': description,
+        'ammount': ammount,
+        'metadata': metadata,
+    }
 
 
 @payment_links.route("/", methods=['GET', 'POST'])
 def index():
     return render_template(
         "payment-links/index.html",
-        links=session.query(payment_links_table).filter_by(created=True).all()
+        links=session.query(payment_links_table).filter_by(created=True).all(),
+        metadata_loader=lambda json_string: json.loads(json_string or {}).items(),
     )
 
 
@@ -44,12 +67,12 @@ def create_payment_link():
 @payment_links.route("/<id>/title-and-description", methods=['GET', 'POST'])
 def title_and_description(id):
     if request.method == 'POST':
-        update = sqlalchemy.get_payment_link_by_id(id).update({
-            'title': request.form['title'],
-            'description': request.form['description'],
-            'slug': slugify(request.form['title']),
-        })
-        session.execute(update)
+        update_payment_link_by_id(
+            id,
+            title=request.form.get('title', 'Untitled'),
+            description=request.form.get('description', ''),
+            slug=slugify(request.form.get('title', 'Untitled')),
+        )
         return redirect(url_for('.ammount', id=id))
     return render_template(
         "payment-links/title-and-description.html",
@@ -63,11 +86,10 @@ def ammount(id):
             ammount = int(request.form.get('ammount', 0))
         except ValueError:
             return "ammount must be a whole number", 400
-        update = session.query(payment_links_table).get(id).update({
-            'ammount': ammount,
-        })
-        session.execute(update)
-        return redirect(url_for('.summary'))
+        update_payment_link_by_id(
+            id, ammount=ammount
+        )
+        return redirect(url_for('.summary', id=id))
     return render_template(
         "payment-links/ammount.html",
     )
@@ -75,39 +97,39 @@ def ammount(id):
 
 @payment_links.route("/<id>/summary", methods=['GET', 'POST'])
 def summary(id):
-    link = session.query(payment_links_table).get(id)
     if request.method == 'POST':
-        update = link.update({
-            'created': True
-        })
-        session.execute(update)
+        update_payment_link_by_id(
+            id, created=True
+        )
+        return redirect(url_for('.index'))
+    link = get_payment_link_by_id(id)
     return render_template(
         "payment-links/summary.html",
-        link=link,
+        id=link['id'],
+        created=link['created'],
+        title=link['title'],
+        description=link['description'],
+        ammount=link['ammount'],
         metadata=[
-            [
-                {'text': key},
-                {'text': value},
-                {'html': '<a href="#">Edit</a>'},
-            ]
-            for key, value in (link.metadata or {}).items()
-        ]
+            [{'text': key}, {'text': value}]
+            for key, value in json.loads(link['metadata']).items()
+        ] if link['metadata'] else None,
     )
 
 
 @payment_links.route("/<id>/add-reporting", methods=['GET', 'POST'])
 def add_reporting(id):
-    link = session.query(payment_links_table).get(id)
+    link = get_payment_link_by_id(id)
     if request.method == 'POST':
-        metadata = link.metadata or {}
+        metadata = json.loads(link['metadata'] or '{}')
         metadata.update({
             request.form['key']: request.form['value']
         })
-        update = link.update({
-            'metadata': JSON.dumps(metadata),
-        })
-        session.execute(update)
-        return redirect(url_for('.payment_links'))
+        update_payment_link_by_id(
+            id,
+            metadata=json.dumps(metadata),
+        )
+        return redirect(url_for('.summary', id=id))
     return render_template(
         "payment-links/add-reporting.html",
     )

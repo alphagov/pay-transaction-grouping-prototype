@@ -6,10 +6,19 @@
 <h1 class="govuk-heading-l">Payment links</h1>
 
 {% for link in links %}
-  <p class="govuk-body">
+  <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
     <a class="govuk-link govuk-link--no-visited-state" href="/payment-links/{{ link.id }}/summary">{{ link.title }}</a>
-    <div class="govuk-hint">https://www.gov.uk/pay/example-service/{{ link.slug }}</div>
-  </p>
+  </h2>
+  <div class="govuk-body govuk-!-margin-bottom-2">https://www.gov.uk/pay/example-service/{{ link.slug }}</div>
+  {% if link.metadata %}
+    <div class="govuk-hint govuk-!-margin-bottom-6">
+      {% for key, value in metadata_loader(link.metadata) %}
+        <span class="metadata-summary">
+          <span class="metadata-summary-key">{{ key }}</span> <span class="metadata-summary-value">{{ value }}</span>
+        </span>
+      {% endfor %}
+    </div>
+  {% endif %}
 {% endfor %}
 
 {% if not links %}
@@ -21,7 +30,8 @@
 <div class="stick-at-bottom">
   {{ govukButton({
     'text': "Create a new payment link",
-    'href': "/payment-links/create"
+    'href': "/payment-links/create",
+    'classes': 'govuk-button--secondary'
   }) }}
 </div>
 

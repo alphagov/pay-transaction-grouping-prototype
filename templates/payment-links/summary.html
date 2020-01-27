@@ -1,3 +1,4 @@
+{% from "components/table/macro.njk" import govukTable %}
 {% from "components/button/macro.njk" import govukButton %}
 {% from "components/input/macro.njk" import govukInput %}
 {% from "components/textarea/macro.njk" import govukTextarea %}
@@ -12,15 +13,26 @@
   'rows': [
     [
       {'text': 'Title'},
-      {'text': link.title},
+      {'text': title},
+      {'html': '<a href="{}">Edit</a>'.format(url_for('.title_and_description', id=id))}
+    ],
+    [
+      {'text': 'Link'},
+      {'html': '<a href="/payment-links/{id}/summary">https://www.gov.uk/pay/example-service/{slug}</a>'.format(
+          id=id, slug=slug,
+        )
+      },
+      {'html': ''}
     ],
     [
       {'text': 'Description'},
-      {'text': link.description},
+      {'text': description},
+      {'html': '<a href="{}">Edit</a>'.format(url_for('.title_and_description', id=id))}
     ],
     [
       {'text': 'Ammount'},
-      {'text': link.ammount},
+      {'text': '£{:,.2f}'.format(ammount)},
+      {'html': '<a href="{}">Edit</a>'.format(url_for('.ammount', id=id))}
     ],
   ]
 }) }}
@@ -33,19 +45,23 @@
   }) }}
   {{ govukButton({
     'text': 'Add more reporting columns',
-    'href': '/payment-links/{id}/add-reporting'.format(link.id),
+    'href': '/payment-links/{id}/add-reporting'.format(id=id),
     'classes': "govuk-button--secondary"
   }) }}
 {% else %}
   {{ govukButton({
     'text': 'Add reporting columns',
-    'href': '/payment-links/{id}/add-reporting'.format(link.id),
+    'href': '/payment-links/{id}/add-reporting'.format(id=id),
     'classes': 'govuk-button--secondary'
   }) }}
 {% endif %}
 
-{{ govukButton({
-  'text': 'Create payment link'
-}) }}
+{% if not created %}
+  <form method="post">
+    {{ govukButton({
+      'text': 'Create payment link'
+    }) }}
+  </form>
+{% endif %}
 
 {% endblock %}

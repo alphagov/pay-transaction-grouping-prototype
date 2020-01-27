@@ -68,3 +68,28 @@ h2 {
 details {
   margin-top: 3em;
 }
+
+.metadata-summary {
+
+  display: inline-block;
+  @include govuk-font(16);
+  color: govuk-colour('dark-grey');
+  border: 2px solid govuk-colour('mid-grey');
+  margin: 0 govuk-spacing(2) 0 0;
+
+  &-key {
+    //font-weight: bold;
+    display: inline-block;
+    background: govuk-colour('light-grey');
+    color: govuk-colour('dark-grey');
+    padding: govuk-spacing(1) govuk-spacing(2);
+    border-right: 2px solid govuk-colour('mid-grey');
+  }
+
+  &-value {
+    display: inline-block;
+    //font-weight: bold;
+    padding: govuk-spacing(1);
+  }
+
+}
