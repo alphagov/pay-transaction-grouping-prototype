@@ -9,16 +9,27 @@
 <h1 class="govuk-heading-l">Payment link</h1>
 
 {{ govukTable({
-  'head': [],
+  'head': [
+    {
+      'text': "",
+      'classes': 'govuk-!-width-one-third'
+    },
+    {
+      'text': ""
+    },
+    {
+      'text': ""
+    },
+  ],
   'rows': [
     [
       {'text': 'Title'},
       {'text': title},
-      {'html': '<a href="{}">Edit</a>'.format(url_for('.title_and_description', id=id))}
+      {'html': '<a class="govuk-link govuk-link--no-visited-state" href="{}">Edit</a>'.format(url_for('.title_and_description', id=id))}
     ],
     [
       {'text': 'Link'},
-      {'html': '<a href="{link}">https://www.gov.uk/pay/example-service/{slug}</a>'.format(
+      {'html': '<a class="govuk-link govuk-link--no-visited-state" href="{link}">https://www.gov.uk/pay/example-service/{slug}</a>'.format(
           link=url_for('pay.payment_link', slug=slug),
           slug=slug,
         )
@@ -28,20 +39,28 @@
     [
       {'text': 'Description'},
       {'text': description},
-      {'html': '<a href="{}">Edit</a>'.format(url_for('.title_and_description', id=id))}
+      {'html': '<a class="govuk-link govuk-link--no-visited-state" href="{}">Edit</a>'.format(url_for('.title_and_description', id=id))}
     ],
     [
       {'text': 'Ammount'},
       {'text': '£{:,.2f}'.format(ammount)},
-      {'html': '<a href="{}">Edit</a>'.format(url_for('.ammount', id=id))}
+      {'html': '<a class="govuk-link govuk-link--no-visited-state" href="{}">Edit</a>'.format(url_for('.ammount', id=id))}
     ],
   ]
 }) }}
 
 {% if metadata %}
-  <h2 class="govuk-heading-m">Reporting columns</h2>
+  <h2 class="govuk-heading-m govuk-!-margin-bottom-0">Reporting columns</h2>
   {{ govukTable({
-    'head': [],
+    'head': [
+      {
+        'text': "",
+        'classes': 'govuk-!-width-one-third'
+      },
+      {
+        'text': ""
+      }
+    ],
     'rows': metadata
   }) }}
   {{ govukButton({
@@ -60,7 +79,7 @@
 {% if created %}
   <form method="post">
     {{ govukButton({
-      'text': 'Save'
+      'text': 'Save changes'
     }) }}
   </form>
 {% else %}

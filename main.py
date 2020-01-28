@@ -246,7 +246,10 @@ def get_transactions_and_column_names(rich_transactions):
             {'text': '£{:,.2f}'.format(result.ammount)},
             {'text': datemaker(index)},
         ] + [
-            {'text': dict(result).get(column_name)}
+            {
+                'text': dict(result).get(column_name),
+                'classes': '' if dict(result).get(column_name) else 'none',
+            }
             for column_name in column_names
         ]
         for index, result in enumerate(results.fetchall())
