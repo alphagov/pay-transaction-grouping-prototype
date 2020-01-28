@@ -196,7 +196,7 @@ def services_transactions():
 
     rich_transactions = list(_get_rich_transactions(
         extra_columns=[
-            ('Service', 'Example service'),
+            ('Service', '<a class="govuk-link govuk-link--no-visited-state" href="/transactions">Example service</a>'),
             ('Merchant ID', 'EXAMPLE_SERVICE_0345_LIVE'),
         ]
     ))
@@ -247,7 +247,7 @@ def get_transactions_and_column_names(rich_transactions):
             {'text': datemaker(index)},
         ] + [
             {
-                'text': dict(result).get(column_name),
+                'html': dict(result).get(column_name),
                 'classes': '' if dict(result).get(column_name) else 'none',
             }
             for column_name in column_names
