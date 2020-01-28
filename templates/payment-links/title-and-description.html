@@ -8,28 +8,36 @@
 <h1 class="govuk-heading-l">Create payment link</h1>
 
 <form method="post">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
 
-  {{ govukInput({
-    'label': {
-      'text': "Title"
-    },
-    'id': "title",
-    'name': "title"
-  }) }}
+      {{ govukInput({
+        'label': {
+          'text': "Title"
+        },
+        'id': "title",
+        'name': "title",
+        'hint': {
+          'text': 'Describe what the user is paying for. For example, ‘Pay for a parking permit’.'
+        }
+      }) }}
 
-  {{ govukTextarea({
-    'name': 'description',
-    'id': 'description',
-    'label': {
-      'text': 'Description'
-    },
-    'hint': {
-      text: ''
-    }
-  }) }}
+      {{ govukTextarea({
+        'name': 'description',
+        'id': 'description',
+        'label': {
+          'text': 'Details (optional)'
+        },
+        'hint': {
+          'text': 'Give your users more information. For example, you could tell them how long it takes for their application to be processed.'
+        }
+      }) }}
+
+    </div>
+  </div>
 
   {{ govukButton({
-    'text': "Create"
+    'text': "Continue"
   }) }}
 
 </form>

@@ -21,18 +21,28 @@
   {% endif %}
 {% endfor %}
 
-{% if not links %}
-  <p class="govuk-body">
-    Explain payment links
-  </p>
-{% endif %}
-
 <div class="stick-at-bottom">
   {{ govukButton({
     'text': "Create a new payment link",
     'href': "/payment-links/create",
     'classes': 'govuk-button--secondary'
   }) }}
+</div>
+
+<div class="keyline">
+{% if not links or True %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <p class="govuk-body">
+        Payment links let you take online payments even if you don’t have a digital service.
+        You don’t need any technical knowledge.
+      </p>
+      <p class="govuk-body">
+        The same payment link can be used by all users of your service.
+      </p>
+    </div>
+  </div>
+{% endif %}
 </div>
 
 {% endblock %}

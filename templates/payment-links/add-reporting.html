@@ -5,34 +5,50 @@
 
 {% block service_content %}
 
-<h1 class="govuk-heading-l">Add reporting</h1>
+<h1 class="govuk-heading-l">Add a reporting column</h1>
 
-<p class="govuk-body">
-  Explain what this is
-</p>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
 
-<form method="post">
+    <p class="govuk-body">
+      Reporting columns let you add extra information to transactions,
+      for example a cost centre code or business area.
+    </p>
 
-  {{ govukInput({
-    'label': {
-      'text': 'Column name'
-    },
-    'id': 'key',
-    'name': 'key'
-  }) }}
+    <p class="govuk-body">
+      They’re not shown to the user making the payment.
+    </p>
 
-  {{ govukInput({
-    'label': {
-      'text': 'Column value'
-    },
-    'id': 'value',
-    'name': 'value'
-  }) }}
+    <form method="post">
 
-  {{ govukButton({
-    'text': 'Create'
-  }) }}
+      {{ govukInput({
+        'label': {
+          'text': 'Column name'
+        },
+        'id': 'key',
+        'name': 'key',
+        'hint': {
+          'text': 'Shown in the header row of the report'
+        }
+      }) }}
 
-</form>
+      {{ govukInput({
+        'label': {
+          'text': 'Cell value'
+        },
+        'id': 'value',
+        'name': 'value',
+        'hint': {
+          'text': 'Added to each row of the report'
+        }
+      }) }}
+
+      {{ govukButton({
+        'text': 'Add reporting column'
+      }) }}
+
+    </form>
+  </div>
+</div>
 
 {% endblock %}

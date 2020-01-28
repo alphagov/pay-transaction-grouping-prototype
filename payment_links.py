@@ -112,7 +112,14 @@ def summary(id):
         description=link['description'],
         ammount=link['ammount'],
         metadata=[
-            [{'text': key}, {'text': value}]
+            [
+                {'text': key},
+                {'text': value},
+                {
+                    'html': '<a class="govuk-link govuk-link--no-visited-state" href="#">Edit</a>',
+                    'format': 'numeric',
+                }
+            ]
             for key, value in json.loads(link['metadata']).items()
         ] if link['metadata'] else None,
     )

@@ -23,28 +23,30 @@
   ],
   'rows': [
     [
-      {'text': 'Title'},
-      {'text': title},
-      {'html': '<a class="govuk-link govuk-link--no-visited-state" href="{}">Edit</a>'.format(url_for('.title_and_description', id=id))}
-    ],
-    [
-      {'text': 'Link'},
+      {'text': 'Public link'},
       {'html': '<a class="govuk-link govuk-link--no-visited-state" href="{link}">https://www.gov.uk/pay/example-service/{slug}</a>'.format(
           link=url_for('pay.payment_link', slug=slug),
+          slug=slug,
+        ) if created else '<span class="govuk-hint govuk-!-margin-bottom-0">https://www.gov.uk/pay/example-service/{slug}</a></span>'.format(
           slug=slug,
         )
       },
       {'html': ''}
     ],
     [
-      {'text': 'Description'},
+      {'text': 'Title'},
+      {'text': title},
+      {'html': '<a class="govuk-link govuk-link--no-visited-state" href="{}">Edit</a>'.format(url_for('.title_and_description', id=id)), 'format': 'numeric'}
+    ],
+    [
+      {'text': 'Details'},
       {'text': description},
-      {'html': '<a class="govuk-link govuk-link--no-visited-state" href="{}">Edit</a>'.format(url_for('.title_and_description', id=id))}
+      {'html': '<a class="govuk-link govuk-link--no-visited-state" href="{}">Edit</a>'.format(url_for('.title_and_description', id=id)), 'format': 'numeric'}
     ],
     [
       {'text': 'Ammount'},
       {'text': '£{:,.2f}'.format(ammount)},
-      {'html': '<a class="govuk-link govuk-link--no-visited-state" href="{}">Edit</a>'.format(url_for('.ammount', id=id))}
+      {'html': '<a class="govuk-link govuk-link--no-visited-state" href="{}">Edit</a>'.format(url_for('.ammount', id=id)), 'format': 'numeric'}
     ],
   ]
 }) }}
@@ -59,12 +61,15 @@
       },
       {
         'text': ""
+      },
+      {
+        'text': ""
       }
     ],
     'rows': metadata
   }) }}
   {{ govukButton({
-    'text': 'Add more reporting columns',
+    'text': 'Add another reporting column',
     'href': '/payment-links/{id}/add-reporting'.format(id=id),
     'classes': "govuk-button--secondary"
   }) }}
