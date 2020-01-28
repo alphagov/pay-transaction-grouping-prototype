@@ -3,13 +3,15 @@
 
 {% block content %}
 
-<h1 class="govuk-heading-l">Pay</h1>
+<h1 class="govuk-heading-l">Pay for {{ link.title }}</h1>
 
-<p class="govuk-body">£{{ ammount }}</p>
+<p class="govuk-body">{{ link.description }}</p>
+
+<p class="govuk-body">£{{ link.ammount }}</p>
 
 <form method="post">
   {{ govukButton({
-    'text': "OK, pay"
+    'text': "Pay now"
   }) }}
 </form>
 

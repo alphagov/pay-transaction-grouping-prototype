@@ -1,7 +1,7 @@
 import json
 import sqlalchemy
 from collections import OrderedDict
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, abort
 from datetime import datetime, timedelta
 from itertools import chain
 from db import session, payment_links_table, transactions_table
@@ -55,23 +55,31 @@ def services_index():
 
 @pay.route("/<slug>", methods=['GET', 'POST'])
 def payment_link(slug):
-    link = session.query(payment_links_table).get(slug=slug)
+    try:
+        link = session.query(payment_links_table).filter_by(slug=slug).one()
+    except sqlalchemy.orm.exc.NoResultFound:
+        abort(404)
+
     if request.method == 'POST':
         insert = sqlalchemy.insert(transactions_table).values(
             ammount=link.ammount,
             metadata=link.metadata,
         )
         session.execute(insert)
-        return redirect(url_for('confirmation', ammount=link.ammount))
+        return redirect(url_for('.confirmation', slug=slug))
     return render_template(
         "pay.html",
-        ammount=link.ammount,
+        link=link,
     )
 
 
-@pay.route("/confirmation/<int:ammount>", methods=['GET', 'POST'])
-def confirmation(ammount):
-    return render_template("confirmation.html", ammount=ammount)
+@pay.route("/confirmation/<slug>", methods=['GET', 'POST'])
+def confirmation(slug):
+    try:
+        link = session.query(payment_links_table).filter_by(slug=slug).one()
+    except sqlalchemy.orm.exc.NoResultFound:
+        abort(404)
+    return render_template("confirmation.html", link=link)
 
 
 def _get_rich_transactions(extra_columns=None):
@@ -79,7 +87,7 @@ def _get_rich_transactions(extra_columns=None):
         out = OrderedDict()
         for key, value in (extra_columns or []):
             out.update({key: value})
-        out.update(json.loads(metadata))
+        out.update(json.loads(metadata or '{}'))
         yield ammount, out
 
 

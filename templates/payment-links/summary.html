@@ -18,8 +18,9 @@
     ],
     [
       {'text': 'Link'},
-      {'html': '<a href="/payment-links/{id}/summary">https://www.gov.uk/pay/example-service/{slug}</a>'.format(
-          id=id, slug=slug,
+      {'html': '<a href="{link}">https://www.gov.uk/pay/example-service/{slug}</a>'.format(
+          link=url_for('pay.payment_link', slug=slug),
+          slug=slug,
         )
       },
       {'html': ''}

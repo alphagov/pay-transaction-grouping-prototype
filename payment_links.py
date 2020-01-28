@@ -108,6 +108,7 @@ def summary(id):
         id=link['id'],
         created=link['created'],
         title=link['title'],
+        slug=link['slug'],
         description=link['description'],
         ammount=link['ammount'],
         metadata=[
