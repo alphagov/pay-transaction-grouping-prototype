@@ -51,8 +51,11 @@
   ]
 }) }}
 
+<h2 class="govuk-heading-m">Reporting columns</h2>
+    <p class="govuk-body {% if metadata %}govuk-!-margin-bottom-0{% endif %}">
+      Reporting columns let you add extra information to transactions, for example a cost centre code or business area.
+    </p>
 {% if metadata %}
-  <h2 class="govuk-heading-m govuk-!-margin-bottom-0">Reporting columns</h2>
   {{ govukTable({
     'head': [
       {
