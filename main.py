@@ -1,7 +1,17 @@
+import csv
 import json
 import sqlalchemy
 from collections import OrderedDict
-from flask import Blueprint, render_template, request, redirect, url_for, abort
+from flask import (
+    Blueprint,
+    Response,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    abort,
+    send_file,
+)
 from datetime import datetime, timedelta
 from itertools import chain
 from db import session, payment_links_table, transactions_table
@@ -212,6 +222,27 @@ def services_transactions():
     )
 
 
+@transactions.route("/services/download.csv")
+def services_transactions_csv():
+
+    rich_transactions = list(_get_rich_transactions(
+        extra_columns=[
+            ('Service', 'Example service'),
+            ('Merchant ID', 'EXAMPLE_SERVICE_0345_LIVE'),
+        ]
+    ))
+    if not rich_transactions:
+        return render_template('services-no-reports.html')
+
+    now = datetime.utcnow().strftime('%Y-%m-%d-%H%M')
+    response = Response(get_csv_data(rich_transactions))
+    response.headers['Content-Type'] = 'text/csv'
+    response.headers['Content-Disposition'] = (
+        'attachment; filename="GOV.UK Pay transactions {}.csv"'.format(now)
+    )
+    return response
+
+
 @transactions.route("/")
 def transactions_index():
 
@@ -225,6 +256,22 @@ def transactions_index():
         transactions=transactions,
         column_names=column_names,
     )
+
+
+@transactions.route("/download.csv")
+def transactions_csv():
+
+    rich_transactions = list(_get_rich_transactions())
+    if not rich_transactions:
+        return render_template('no-reports.html')
+
+    now = datetime.utcnow().strftime('%Y-%m-%d-%H%M')
+    response = Response(get_csv_data(rich_transactions))
+    response.headers['Content-Type'] = 'text/csv'
+    response.headers['Content-Disposition'] = (
+        'attachment; filename="Example Service transactions {}.csv"'.format(now)
+    )
+    return response
 
 
 def get_transactions_and_column_names(rich_transactions):
@@ -264,6 +311,39 @@ def get_transactions_and_column_names(rich_transactions):
     ]
 
     return transactions, column_names
+
+
+def get_csv_data(rich_transactions):
+
+    column_names = _column_names(rich_transactions)
+    subquery = _get_subquery(rich_transactions)
+
+    results = session.execute(
+        subquery.select()
+    )
+
+    def datemaker(i):
+        return (
+            datetime.utcnow() - timedelta(seconds=(i * 2345))
+        ).strftime('%d %b %Y at %-I:%M%p')
+
+    rows = [
+        ['Ammount', 'Date'] + column_names
+    ] + [
+        [
+            result.ammount,
+            datemaker(index),
+        ] + [
+            dict(result).get(column_name)
+            for column_name in column_names
+        ]
+        for index, result in enumerate(results.fetchall())
+    ]
+
+    return "\n".join(
+        ",".join(str(column) for column in row)
+        for row in rows
+    )
 
 
 @settings.route("/drop")
