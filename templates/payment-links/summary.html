@@ -8,6 +8,7 @@
 
 <h1 class="govuk-heading-l">Payment link</h1>
 
+<h2 class="govuk-heading-m">What the person paying sees</h2>
 {{ govukTable({
   'head': [
     {
@@ -51,38 +52,43 @@
   ]
 }) }}
 
-<h2 class="govuk-heading-m">Reporting columns</h2>
-    <p class="govuk-body {% if metadata %}govuk-!-margin-bottom-0{% endif %}">
-      Reporting columns let you add extra information to transactions, for example a cost centre code or business area.
-    </p>
-{% if metadata %}
-  {{ govukTable({
-    'head': [
-      {
-        'text': "",
-        'classes': 'govuk-!-width-one-third'
-      },
-      {
-        'text': ""
-      },
-      {
-        'text': ""
-      }
-    ],
-    'rows': metadata
-  }) }}
-  {{ govukButton({
-    'text': 'Add another reporting column',
-    'href': '/payment-links/{id}/add-reporting'.format(id=id),
-    'classes': "govuk-button--secondary"
-  }) }}
-{% else %}
-  {{ govukButton({
-    'text': 'Add reporting columns',
-    'href': '/payment-links/{id}/add-reporting'.format(id=id),
-    'classes': 'govuk-button--secondary'
-  }) }}
-{% endif %}
+  <h2 class="govuk-heading-m">What will show up in the transactions report</h2>
+  <table class="spreadsheet">
+    <thead>
+      <tr>
+        {% for key, _ in metadata %}
+          <td>{{ key }}</td>
+        {% endfor %}
+        <td class="button-field">
+          {{ govukButton({
+            'text': 'Add a column',
+            'href': '/payment-links/{id}/add-reporting'.format(id=id),
+            'classes': "govuk-button--secondary"
+          }) }}
+        </td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        {% for key, value in metadata %}
+          <td>
+            {{ value|safe }}
+          </td>
+        {% endfor %}
+        <td class="button-field"></td>
+      </tr>
+      <tr>
+        {% for key, value in metadata %}
+          <td class="borderless-field">
+            {% if key not in ['Amount', 'Description'] %}
+              <a class="govuk-link govuk-link--no-visited-state" href="#">Edit</a>
+            {% endif %}
+          </td>
+        {% endfor %}
+        <td class="borderless-field"></td>
+      </tr>
+    </tbody>
+  </table>
 
 {% if created %}
   <form method="post">

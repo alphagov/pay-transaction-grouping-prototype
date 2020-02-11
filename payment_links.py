@@ -103,6 +103,13 @@ def summary(id):
         )
         return redirect(url_for('.index'))
     link = get_payment_link_by_id(id)
+    metadata=[
+        ('Amount', '£{:,.2f}'.format(link['ammount'])),
+        ('Description', link['description']),
+        ('Reference number', '<span class="govuk-hint">Created by GOV.UK Pay</span>'),
+    ] + list(
+        json.loads(link['metadata']).items() if link['metadata'] else []
+    )
     return render_template(
         "payment-links/summary.html",
         id=link['id'],
@@ -111,17 +118,7 @@ def summary(id):
         slug=link['slug'],
         description=link['description'],
         ammount=link['ammount'],
-        metadata=[
-            [
-                {'text': key},
-                {'text': value},
-                {
-                    'html': '<a class="govuk-link govuk-link--no-visited-state" href="#">Edit</a>',
-                    'format': 'numeric',
-                }
-            ]
-            for key, value in json.loads(link['metadata']).items()
-        ] if link['metadata'] else None,
+        metadata=metadata,
     )
 
 

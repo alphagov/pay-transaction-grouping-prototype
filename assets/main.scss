@@ -98,3 +98,43 @@ details {
   border-top: 1px solid govuk-colour('mid-grey');
   padding-top: govuk-spacing(6);
 }
+
+.spreadsheet {
+
+  @include govuk-font(19);
+  margin-bottom: govuk-spacing(6);
+  width: 100%;
+
+  thead {
+    td {
+      background: govuk-colour('light-grey');
+      padding: govuk-spacing(2);
+      border-bottom: 0;
+    }
+  }
+
+  td {
+    border: 1px solid govuk-colour('mid-grey');
+    border-right: none;
+    padding: govuk-spacing(2);
+
+    &:last-child {
+      border-right: 1px solid govuk-colour('mid-grey');
+    }
+
+    &.button-field {
+      background: none;
+      a {
+        display: block;
+        margin-bottom: 0 !important;
+      }
+    }
+
+    &.borderless-field {
+      border: none;
+    }
+  }
+
+
+
+}
