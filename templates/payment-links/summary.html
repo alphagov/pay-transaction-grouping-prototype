@@ -8,7 +8,6 @@
 
 <h1 class="govuk-heading-l">Payment link</h1>
 
-<h2 class="govuk-heading-m">What the person paying sees</h2>
 {{ govukTable({
   'head': [
     {
@@ -52,7 +51,10 @@
   ]
 }) }}
 
-  <h2 class="govuk-heading-m">What will show up in the transactions report</h2>
+  <h2 class="govuk-heading-m">Reporting columns</h2>
+  <p class="govuk-body">
+    When someone uses this payment link this row will appear the report you can download
+  </p>
   <table class="spreadsheet">
     <thead>
       <tr>
@@ -72,36 +74,34 @@
       <tr>
         {% for key, value in metadata %}
           <td>
-            {{ value|safe }}
-          </td>
-        {% endfor %}
-        <td class="button-field"></td>
-      </tr>
-      <tr>
-        {% for key, value in metadata %}
-          <td class="borderless-field">
-            {% if key not in ['Amount', 'Description'] %}
-              <a class="govuk-link govuk-link--no-visited-state" href="#">Edit</a>
+            {% if key == 'Reference number' %}
+              <span class="govuk-hint govuk-!-margin-bottom-0">Created by GOV.UK Pay</span>
+            {% elif key in ['Amount', 'Description'] %}
+              {{ value }}
+            {% else %}
+              {% if value %}
+                {{ value }}
+                <a class="govuk-link govuk-link--no-visited-state" href="/payment-links/{{ id }}/add-reporting?key={{ key }}&value={{ value }}">
+                  Change
+                </a>
+              {% else %}
+
+                <a class="govuk-link govuk-link--no-visited-state" href="/payment-links/{{ id }}/add-reporting?key={{ key }}&value={{ value }}">
+                  Add {{ key | lower }}
+                </a>
+              {% endif %}
             {% endif %}
           </td>
         {% endfor %}
-        <td class="borderless-field"></td>
+        <td class="spacer-field"></td>
       </tr>
     </tbody>
   </table>
 
-{% if created %}
   <form method="post">
     {{ govukButton({
       'text': 'Save changes'
     }) }}
   </form>
-{% else %}
-  <form method="post">
-    {{ govukButton({
-      'text': 'Create payment link'
-    }) }}
-  </form>
-{% endif %}
 
 {% endblock %}

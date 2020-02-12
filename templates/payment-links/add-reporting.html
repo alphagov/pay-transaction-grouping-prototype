@@ -10,29 +10,24 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
 
-    <p class="govuk-body">
-      Reporting columns are not shown to the user making the payment.
-    </p>
-
     <form method="post" autocomplete="off">
 
       {{ govukInput({
         'label': {
-          'text': 'Column name'
+          'text': 'Column header'
         },
         'id': 'key',
         'name': 'key',
-        'hint': {
-          'text': 'Shown in the header row of the report'
-        }
+        'value': request.args.get('key', '')
       }) }}
 
       {{ govukInput({
         'label': {
-          'text': 'Cell value'
+          'text': 'Row value'
         },
         'id': 'value',
         'name': 'value',
+        'value': request.args.get('value', ''),
         'hint': {
           'text': 'Added to each row of the report'
         }

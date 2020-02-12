@@ -11,7 +11,7 @@
   </h2>
   <div class="govuk-body govuk-!-margin-bottom-2">https://www.gov.uk/pay/example-service/{{ link.slug }}</div>
   {% if link.metadata %}
-    <div class="govuk-hint govuk-!-margin-bottom-6">
+    <div class="govuk-hint govuk-!-margin-bottom-6 metadata-summary-container">
       {% for key, value in metadata_loader(link.metadata) %}
         <span class="metadata-summary">
           <span class="metadata-summary-key">{{ key }}</span> <span class="metadata-summary-value">{{ value }}</span>

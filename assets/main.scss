@@ -71,7 +71,12 @@ details {
 
 .metadata-summary {
 
+  &-container {
+    overflow: hidden;
+  }
+
   display: inline-block;
+  float: left;
   @include govuk-font(16);
   color: govuk-colour('dark-grey');
   border: 2px solid govuk-colour('mid-grey');
@@ -88,7 +93,6 @@ details {
 
   &-value {
     display: inline-block;
-    //font-weight: bold;
     padding: govuk-spacing(1);
   }
 
@@ -110,16 +114,24 @@ details {
       background: govuk-colour('light-grey');
       padding: govuk-spacing(2);
       border-bottom: 0;
+      color: govuk-colour('dark-grey');
     }
   }
 
   td {
     border: 1px solid govuk-colour('mid-grey');
+    border-top: 2px solid govuk-colour('mid-grey');
+    border-bottom: 2px solid govuk-colour('mid-grey');
     border-right: none;
     padding: govuk-spacing(2);
+    vertical-align: top;
+
+    &:first-child {
+      border-left: 2px solid govuk-colour('mid-grey');
+    }
 
     &:last-child {
-      border-right: 1px solid govuk-colour('mid-grey');
+      border-right: 2px solid govuk-colour('mid-grey');
     }
 
     &.button-field {
@@ -130,8 +142,19 @@ details {
       }
     }
 
+    &.spacer-field {
+      border-top: none;
+    }
+
     &.borderless-field {
       border: none;
+    }
+    a {
+      display: block;
+    }
+    .govuk-button {
+      position: relative;
+      top: 35px;
     }
   }
 

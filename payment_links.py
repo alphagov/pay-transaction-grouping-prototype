@@ -1,6 +1,7 @@
 import json
 import sqlalchemy
 from db import session, payment_links_table
+from itertools import chain
 from flask import Blueprint, abort, render_template, request, redirect, url_for
 from slugify import slugify
 
@@ -103,12 +104,18 @@ def summary(id):
         )
         return redirect(url_for('.index'))
     link = get_payment_link_by_id(id)
-    metadata=[
-        ('Amount', '£{:,.2f}'.format(link['ammount'])),
+    all_metadata_keys = sorted(set(chain.from_iterable(
+        (json.loads(link.metadata) if link.metadata else {}).keys()
+        for link in session.query(payment_links_table).all()
+    )))
+    link_metadata = json.loads(link['metadata']) if link['metadata'] else {}
+    metadata = [
+        ('Amount', '{:.2f}'.format(link['ammount'])),
         ('Description', link['description']),
-        ('Reference number', '<span class="govuk-hint">Created by GOV.UK Pay</span>'),
+        ('Reference number', 'Created by GOV.UK Pay'),
     ] + list(
-        json.loads(link['metadata']).items() if link['metadata'] else []
+        (key, link_metadata.get(key, ''))
+        for key in all_metadata_keys
     )
     return render_template(
         "payment-links/summary.html",
