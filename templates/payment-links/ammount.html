@@ -5,21 +5,45 @@
 {% block service_content %}
 
 <h1 class="govuk-heading-l">How much is the payment for?</h1>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-one-half">
+    <form method="post" autocomplete="off">
+      {{ govukInput({
+        'label': {
+          'text': "Amount (£)"
+        },
+        'classes': "govuk-input--width-4",
+        'id': "ammount",
+        'name': "ammount"
+      }) }}
 
-<form method="post" autocomplete="off">
-  {{ govukInput({
-    'label': {
-      'text': "Amount (£)"
-    },
-    'classes': "govuk-input--width-4",
-    'id': "ammount",
-    'name': "ammount"
-  }) }}
+      {{ govukButton({
+        'text': "Continue"
+      }) }}
 
-  {{ govukButton({
-    'text': "Continue"
-  }) }}
-
-</form>
+    </form>
+  </div>
+  <div class="govuk-grid-column-one-half">
+    <h2 class="govuk-heading-m">
+      How this will look
+    </h2>
+    <div class="screenshot">
+      <div id="link-preview">
+        https://www.gov.uk/pay/…
+      </div>
+      <div class="screenshot-header">
+        GOV.UK&emsp;Example service
+      </div>
+      <div class="screenshot-body">
+        <h3 class="govuk-heading-s" id="new-column-title">{{ link.title }}</h3>
+        <p class="govuk-body" id="new-column-description">{{ link.description }}</p>
+        <div class="govuk-inset-text">
+          £<span id="new-column-ammount"></span>
+        </div>
+        <div class="screenshot-button">Continue</div>
+      </div>
+    </div>
+  </div>
+</div>
 
 {% endblock %}

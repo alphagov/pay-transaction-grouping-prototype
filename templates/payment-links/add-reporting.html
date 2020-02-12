@@ -8,7 +8,7 @@
 <h1 class="govuk-heading-l">Add a reporting column</h1>
 
 <div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
+  <div class="govuk-grid-column-one-half">
 
     <p class="govuk-body">
       Reporting columns are not shown to the user making the payment.
@@ -18,10 +18,11 @@
 
       {{ govukInput({
         'label': {
-          'text': 'Column name'
+          'text': 'Column header'
         },
         'id': 'key',
         'name': 'key',
+        'value': request.args.get('key', ''),
         'hint': {
           'text': 'Shown in the header row of the report'
         }
@@ -33,6 +34,7 @@
         },
         'id': 'value',
         'name': 'value',
+        'value': request.args.get('value', ''),
         'hint': {
           'text': 'Added to each row of the report'
         }
@@ -43,6 +45,27 @@
       }) }}
 
     </form>
+  </div>
+  <div class="govuk-grid-column-one-half">
+    <h2 class="govuk-heading-m">
+      How this will appear in your report
+    </h2>
+    <table class="spreadsheet">
+      <thead>
+        <tr>
+          <td>Amount</td>
+          <td>Description</td>
+          <td id="new-column-key">Column header</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ '{:.2f}'.format(link.ammount) }}</td>
+          <td>{{ link.title }}</td>
+          <td id="new-column-value"></td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>
 

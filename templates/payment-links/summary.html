@@ -36,17 +36,17 @@
     [
       {'text': 'Title'},
       {'text': title},
-      {'html': '<a class="govuk-link govuk-link--no-visited-state" href="{}">Edit</a>'.format(url_for('.title_and_description', id=id)), 'format': 'numeric'}
+      {'html': '<a class="govuk-link govuk-link--no-visited-state" href="{}">Change</a>'.format(url_for('.title_and_description', id=id)), 'format': 'numeric'}
     ],
     [
       {'text': 'Details'},
       {'text': description},
-      {'html': '<a class="govuk-link govuk-link--no-visited-state" href="{}">Edit</a>'.format(url_for('.title_and_description', id=id)), 'format': 'numeric'}
+      {'html': '<a class="govuk-link govuk-link--no-visited-state" href="{}">Change</a>'.format(url_for('.title_and_description', id=id)), 'format': 'numeric'}
     ],
     [
       {'text': 'Amount'},
       {'text': '£{:,.2f}'.format(ammount)},
-      {'html': '<a class="govuk-link govuk-link--no-visited-state" href="{}">Edit</a>'.format(url_for('.ammount', id=id)), 'format': 'numeric'}
+      {'html': '<a class="govuk-link govuk-link--no-visited-state" href="{}">Change</a>'.format(url_for('.ammount', id=id)), 'format': 'numeric'}
     ],
   ]
 }) }}
@@ -84,18 +84,10 @@
   }) }}
 {% endif %}
 
-{% if created %}
-  <form method="post">
-    {{ govukButton({
-      'text': 'Save changes'
-    }) }}
-  </form>
-{% else %}
-  <form method="post">
-    {{ govukButton({
-      'text': 'Create payment link'
-    }) }}
-  </form>
-{% endif %}
+<form method="post">
+  {{ govukButton({
+    'text': 'Save changes'
+  }) }}
+</form>
 
 {% endblock %}

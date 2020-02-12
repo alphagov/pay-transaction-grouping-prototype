@@ -12,6 +12,26 @@
       }
     ]
   }) }}
+  <script
+    src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+    crossorigin="anonymous"></script>
+  <script type="text/javascript">
+    $(function() {
+      $("input, textarea").on('keyup change', function() {
+        $("#new-column-" + $(this).attr("id")).text(
+          $(this).val()
+        )
+      }).trigger('keyup');
+
+      $("#title").on('keyup change', function() {
+        var val = $(this).val().toLowerCase().replace(' ', '-');
+        $("#link-preview").html(
+          'https://www.gov.uk/pay/example-service/' + val
+        )
+      }).trigger('keyup');
+    });
+  </script>
 {% endblock %}
 {% block body %}
   <nav class="sub">

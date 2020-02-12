@@ -1,6 +1,7 @@
 import json
 import sqlalchemy
 from db import session, payment_links_table
+from itertools import chain
 from flask import Blueprint, abort, render_template, request, redirect, url_for
 from slugify import slugify
 
@@ -92,6 +93,7 @@ def ammount(id):
         return redirect(url_for('.summary', id=id))
     return render_template(
         "payment-links/ammount.html",
+        link=get_payment_link_by_id(id),
     )
 
 
@@ -103,6 +105,15 @@ def summary(id):
         )
         return redirect(url_for('.index'))
     link = get_payment_link_by_id(id)
+    all_metadata_keys = sorted(set(chain.from_iterable(
+        (json.loads(link.metadata) if link.metadata else {}).keys()
+        for link in session.query(payment_links_table).all()
+    )))
+    link_metadata = json.loads(link['metadata']) if link['metadata'] else {}
+    metadata = [
+        (key, link_metadata.get(key, ''))
+        for key in all_metadata_keys
+    ]
     return render_template(
         "payment-links/summary.html",
         id=link['id'],
@@ -114,14 +125,14 @@ def summary(id):
         metadata=[
             [
                 {'text': key},
-                {'text': value},
+                {'html': value or '<span class="govuk-hint govuk-!-margin-bottom-0">Not set</span>'},
                 {
-                    'html': '<a class="govuk-link govuk-link--no-visited-state" href="#">Edit</a>',
+                    'html': '<a class="govuk-link govuk-link--no-visited-state" href="/payment-links/{id}/add-reporting?key={key}&value={value}">Change</a>'.format(id=link['id'], key=key, value=value) if value else '<a class="govuk-link govuk-link--no-visited-state" href="/payment-links/{id}/add-reporting?key={key}">Add</a>'.format(id=link['id'], key=key),
                     'format': 'numeric',
                 }
             ]
-            for key, value in json.loads(link['metadata']).items()
-        ] if link['metadata'] else None,
+            for key, value in metadata
+        ],
     )
 
 
@@ -140,4 +151,5 @@ def add_reporting(id):
         return redirect(url_for('.summary', id=id))
     return render_template(
         "payment-links/add-reporting.html",
+        link=link,
     )
