@@ -52,8 +52,11 @@
 }) }}
 
 <h2 class="govuk-heading-m">Reporting columns</h2>
+    <p class="govuk-body">
+      Add extra columns to your transactions, for example cost centre code or business area.
+    </p>
     <p class="govuk-body {% if metadata %}govuk-!-margin-bottom-0{% endif %}">
-      Reporting columns let you add extra information to transactions, for example a cost centre code or business area.
+      This can make it easier to match up payments with other systems.
     </p>
 {% if metadata %}
   {{ govukTable({
@@ -71,18 +74,13 @@
     ],
     'rows': metadata
   }) }}
-  {{ govukButton({
-    'text': 'Add another reporting column',
-    'href': '/payment-links/{id}/add-reporting'.format(id=id),
-    'classes': "govuk-button--secondary"
-  }) }}
-{% else %}
-  {{ govukButton({
-    'text': 'Add reporting columns',
-    'href': '/payment-links/{id}/add-reporting'.format(id=id),
-    'classes': 'govuk-button--secondary'
-  }) }}
 {% endif %}
+
+{{ govukButton({
+  'text': 'Add a reporting column',
+  'href': '/payment-links/{id}/add-reporting'.format(id=id),
+  'classes': 'govuk-button--secondary'
+}) }}
 
 <form method="post">
   {{ govukButton({

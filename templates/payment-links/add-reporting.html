@@ -10,10 +10,6 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-one-half">
 
-    <p class="govuk-body">
-      Reporting columns are not shown to the user making the payment.
-    </p>
-
     <form method="post" autocomplete="off">
 
       {{ govukInput({
@@ -24,19 +20,19 @@
         'name': 'key',
         'value': request.args.get('key', ''),
         'hint': {
-          'text': 'Shown in the header row of the report'
+          'text': 'For example ‘Cost centre code’ or ‘Location’'
         }
       }) }}
 
       {{ govukInput({
         'label': {
-          'text': 'Cell value'
+          'text': 'Row value'
         },
         'id': 'value',
         'name': 'value',
         'value': request.args.get('value', ''),
         'hint': {
-          'text': 'Added to each row of the report'
+          'text': 'Will be added to each payment'
         }
       }) }}
 
@@ -66,6 +62,9 @@
         </tr>
       </tbody>
     </table>
+    <p class="govuk-body">
+      Reporting columns are not shown to the user making the payment.
+    </p>
   </div>
 </div>
 

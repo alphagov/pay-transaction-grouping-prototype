@@ -81,15 +81,16 @@ details {
     //font-weight: bold;
     display: inline-block;
     background: govuk-colour('light-grey');
-    color: govuk-colour('dark-grey');
+    color: govuk-colour('black');
     padding: govuk-spacing(1) govuk-spacing(2);
-    border-right: 2px solid govuk-colour('mid-grey');
+    border-bottom: 2px solid govuk-colour('mid-grey');
   }
 
   &-value {
-    display: inline-block;
+    display: block;
     //font-weight: bold;
-    padding: govuk-spacing(1);
+    color: govuk-colour('black');
+    padding: govuk-spacing(1) govuk-spacing(2);
   }
 
 }
@@ -111,7 +112,7 @@ details {
       background: govuk-colour('light-grey');
       padding: govuk-spacing(2);
       border-bottom: 0;
-      color: govuk-colour('dark-grey');
+      color: govuk-colour('black');
     }
   }
 
