@@ -1,11 +1,35 @@
+{% from "components/button/macro.njk" import govukButton %}
+
 {% extends "_services_admin_base.html" %}
 
 {% block service_content %}
 
-<h1 class="govuk-heading-l">Services</h1>
+<h1 class="govuk-heading-l">All services</h1>
 
 <h2 class="govuk-heading-m govuk-!-margin-bottom-2"><a class="govuk-link govuk-link--no-visited-state" href="/">Example service</a></h2>
 <div class="govuk-body">
   {{ '£{:,.2f}'.format(example_total) }} total income
+</div>
+
+{% for service_name in (
+  'Bulky waste',
+  'Council tax',
+  'Library fees',
+  'Order a green bin',
+  'Parking fines',
+  'Transport team'
+) %}
+<h2 class="govuk-heading-m govuk-!-margin-bottom-2"><a class="govuk-link govuk-link--no-visited-state" href="#">{{ service_name }}</a></h2>
+<div class="govuk-body">
+  {{ '£{:,.2f}'.format(0) }} total income
+</div>
+{% endfor %}
+
+<div class="sticky-footer">
+  {{ govukButton({
+    'text': 'Create a new service',
+    'href': '/payment-links/{id}/add-reporting'.format(id=id),
+    'classes': 'govuk-button--secondary govuk-!-margin-bottom-1'
+  }) }}
 </div>
 {% endblock %}
